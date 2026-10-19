@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Shield, User, Compass, Trophy, LogIn } from 'lucide-react';
+import { Shield, User, Compass, Trophy, LogIn, ShieldAlert } from 'lucide-react';
 
 export function Navbar() {
   return (
@@ -25,6 +25,13 @@ export function Navbar() {
           <Link href="/ranking" className="hover:text-white transition flex items-center gap-1.5">
             <Trophy className="w-4 h-4" />
             Ranking
+          </Link>
+          <Link
+            href="/admin"
+            className="hover:text-amber-400 text-amber-300/90 transition flex items-center gap-1.5 px-2 py-0.5 rounded bg-amber-950/40 border border-amber-900/60 text-xs font-medium"
+          >
+            <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
+            Admin & Moderação
           </Link>
         </nav>
 

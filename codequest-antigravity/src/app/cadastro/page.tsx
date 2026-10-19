@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   CheckCircle2,
   Sparkles,
+  Github,
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
@@ -144,6 +145,26 @@ export default function CadastroPage() {
           </CardHeader>
 
           <CardContent>
+            {/* CADASTRO SOCIAL VIA GITHUB OAUTH (RF01b) */}
+            <div className="mb-4">
+              <a
+                href="/api/auth/github"
+                className="w-full inline-flex items-center justify-center font-medium rounded-lg transition-colors border border-slate-700 bg-slate-950/70 hover:bg-slate-800 hover:border-slate-600 text-slate-200 gap-2.5 text-xs sm:text-sm py-2.5 shadow-sm"
+              >
+                <Github className="w-4 h-4 text-white" />
+                <span>Criar Conta com GitHub (OAuth)</span>
+              </a>
+            </div>
+
+            <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-slate-800" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-slate-900 px-2 text-slate-500">ou cadastre com e-mail</span>
+              </div>
+            </div>
+
             {erroGeral && (
               <div className="mb-4 p-3 rounded-lg bg-red-950/60 border border-red-800 text-red-300 text-xs flex items-center gap-2 animate-in fade-in">
                 <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />

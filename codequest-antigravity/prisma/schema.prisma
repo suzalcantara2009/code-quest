@@ -114,6 +114,7 @@ model Missao {
   id              Int       @id @default(autoincrement())
   modulo_id       Int
   titulo          String    @db.VarChar(150)
+  teoria          String?   @db.Text
   enunciado       String    @db.Text
   codigo_inicial  String?   @db.Text
   criterio_aceite String    @db.Text

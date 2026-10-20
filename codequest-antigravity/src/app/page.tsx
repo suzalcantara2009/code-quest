@@ -223,53 +223,53 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="p-6 rounded-xl border border-slate-800 bg-slate-900/60 flex flex-col justify-between">
+          <Link href="/trilha/1" className="p-6 rounded-xl border border-slate-800 bg-slate-900/60 hover:border-indigo-500/50 transition-colors flex flex-col justify-between group">
             <div>
               <span className="text-xs font-mono font-bold text-indigo-400">MÓDULO 01</span>
-              <h4 className="font-bold text-white text-base mt-1 mb-2">Programação em Blocos</h4>
+              <h4 className="font-bold text-white text-base mt-1 mb-2 group-hover:text-indigo-400 transition-colors">Programação em Blocos</h4>
               <p className="text-xs text-slate-400">Raciocínio algorítmico, variáveis e tomada de decisão lógica.</p>
             </div>
             <div className="mt-6 pt-4 border-t border-slate-800/80 text-xs text-indigo-400 font-semibold flex items-center justify-between">
               <span>Fundamentos</span>
-              <span>→</span>
+              <span className="group-hover:translate-x-1 transition-transform">→</span>
             </div>
-          </div>
+          </Link>
 
-          <div className="p-6 rounded-xl border border-slate-800 bg-slate-900/60 flex flex-col justify-between">
+          <Link href="/trilha/2" className="p-6 rounded-xl border border-slate-800 bg-slate-900/60 hover:border-cyan-500/50 transition-colors flex flex-col justify-between group">
             <div>
               <span className="text-xs font-mono font-bold text-cyan-400">MÓDULO 02</span>
-              <h4 className="font-bold text-white text-base mt-1 mb-2">Linguagem Python</h4>
+              <h4 className="font-bold text-white text-base mt-1 mb-2 group-hover:text-cyan-400 transition-colors">Linguagem Python</h4>
               <p className="text-xs text-slate-400">Sintaxe limpa, manipulação de arquivos e coleções essenciais.</p>
             </div>
             <div className="mt-6 pt-4 border-t border-slate-800/80 text-xs text-cyan-400 font-semibold flex items-center justify-between">
               <span>Backend & Scripts</span>
-              <span>→</span>
+              <span className="group-hover:translate-x-1 transition-transform">→</span>
             </div>
-          </div>
+          </Link>
 
-          <div className="p-6 rounded-xl border border-slate-800 bg-slate-900/60 flex flex-col justify-between">
+          <Link href="/trilha/3" className="p-6 rounded-xl border border-slate-800 bg-slate-900/60 hover:border-amber-500/50 transition-colors flex flex-col justify-between group">
             <div>
               <span className="text-xs font-mono font-bold text-amber-400">MÓDULO 03</span>
-              <h4 className="font-bold text-white text-base mt-1 mb-2">HTML5 e CSS3 Modernos</h4>
+              <h4 className="font-bold text-white text-base mt-1 mb-2 group-hover:text-amber-400 transition-colors">HTML5 e CSS3 Modernos</h4>
               <p className="text-xs text-slate-400">Semântica, responsividade, flexbox, grid e acessibilidade na web.</p>
             </div>
             <div className="mt-6 pt-4 border-t border-slate-800/80 text-xs text-amber-400 font-semibold flex items-center justify-between">
               <span>Frontend Base</span>
-              <span>→</span>
+              <span className="group-hover:translate-x-1 transition-transform">→</span>
             </div>
-          </div>
+          </Link>
 
-          <div className="p-6 rounded-xl border border-slate-800 bg-slate-900/60 flex flex-col justify-between">
+          <Link href="/trilha/4" className="p-6 rounded-xl border border-slate-800 bg-slate-900/60 hover:border-emerald-500/50 transition-colors flex flex-col justify-between group">
             <div>
               <span className="text-xs font-mono font-bold text-emerald-400">MÓDULO 04</span>
-              <h4 className="font-bold text-white text-base mt-1 mb-2">JavaScript & APIs</h4>
+              <h4 className="font-bold text-white text-base mt-1 mb-2 group-hover:text-emerald-400 transition-colors">JavaScript & APIs</h4>
               <p className="text-xs text-slate-400">Manipulação dinâmica de DOM, requisições fetch assíncronas e eventos.</p>
             </div>
             <div className="mt-6 pt-4 border-t border-slate-800/80 text-xs text-emerald-400 font-semibold flex items-center justify-between">
               <span>Aplicações Web</span>
-              <span>→</span>
+              <span className="group-hover:translate-x-1 transition-transform">→</span>
             </div>
-          </div>
+          </Link>
         </div>
       </section>
 

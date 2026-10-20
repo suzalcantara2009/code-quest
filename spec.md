@@ -1,219 +1,356 @@
-# CodeQuest
+# CodeQuest — Especificação Técnica Final (Spec)
 
-> Spec revisada para seguir exatamente as **8 seções** do template do Anexo A da apostila, na ordem exigida pelo enunciado da atividade avaliativa (Objetivo → Usuários → Casos de uso → Requisitos funcionais → Requisitos não funcionais → Modelo de dados com DER visual → Critérios de aceite → Decisão de stack e deploy). Nesta revisão: (1) adicionada a Seção 8, que estava ausente; (2) adicionado o diagrama DER em Mermaid na Seção 6; (3) adicionados critérios de aceite para RFs do MVP que ainda não tinham um; (4) a Seção 5 foi separada em RN/RNF/RI numerados; (5) **expansão de profundidade**: os requisitos funcionais foram reorganizados em 10 módulos e cresceram de 21 para 30 itens (verificação de e-mail, edição de conta, logout/encerramento de sessões, termos de uso, exclusão de conta, ordenação alternativa, atualização manual de cache, progresso salvo na trilha, filtro de missões por dificuldade, histórico de missões, validação HMAC de webhook, badges, log de auditoria consultável, denúncia/moderação detalhadas, convite/remoção em sala, exportação de relatório e de dados pessoais, painel de métricas, suspensão de conta); as Regras de Negócio cresceram de 6 para 13 e os Requisitos Não Funcionais de 12 para 19; a categoria de Interface ganhou 5 itens novos; e o modelo de dados (Seção 6) recebeu as tabelas `sessoes`, `denuncias`, `salas` e `sala_alunos`, além de colunas novas em `usuarios` e `missoes`, para sustentar tecnicamente todos esses requisitos novos — nenhum deles ficou "no ar" sem representação no schema.
+> **Documento de Especificação Técnica e Arquitetural do Projeto CodeQuest**  
+> Elaborado rigorosamente conforme o template de 8 seções normativas do Anexo A da apostila de desenvolvimento.  
+> **Status:** Versão Final Atualizada — Alinhada com o Schema Prisma, Rotas, Telas e Catálogo Oficial de Missões.
+
+---
 
 ## 1. Objetivo
 
-O CodeQuest é uma plataforma web gamificada que transforma a prática de programação em uma progressão de RPG, para desenvolvedores júniores e estudantes de TI que perdem a motivação em ferramentas de portfólio passivas (perfil estático do GitHub, README). Cada usuário mantém uma "ficha de personagem" cujo atributo de poder evolui com a conclusão de missões pedagógicas e com a atividade real verificada na sua conta do GitHub, tornando o progresso visível, contínuo e verificável.
+O **CodeQuest** é uma plataforma web gamificada projetada para resolver a falta de engajamento e a estagnação de desenvolvedores júniores e estudantes de TI em portfólios estáticos tradicionais (ex.: perfis simples do GitHub, arquivos README sem interação). 
+
+A plataforma transforma o aprendizado prático de desenvolvimento de software em uma jornada de RPG (*Role-Playing Game*). Cada usuário gerencia uma **Ficha de Personagem** cujo atributo de **Poder de Combate (0–100)** evolui de maneira verificável e transparente por meio de dois pilares complementares:
+1. **Conclusão de Missões Pedagógicas Práticas**: Desafios algorítmicos e de código estruturados em uma Trilha de Aprendizagem de 4 módulos encadeados (Programação em Blocos, Python, HTML5/CSS3 e JavaScript ES6+);
+2. **Atividade Real e Verificada no GitHub**: Integração com a API do GitHub com cache relacional persistido, extraindo métricas públicas (repositórios, linguagens e estrelas acumuladas).
+
+Além da progressão individual do estudante, o CodeQuest oferece ecossistemas completos para educadores (Salas de Aula Virtuais com acompanhamento de turmas), moderadores (Tribunal de Denúncias contra condutas abusivas) e administradores (Curadoria oficial de desafios didáticos e auditoria inviolável em conformidade com a LGPD).
+
+---
 
 ## 2. Usuários
 
-* **Visitante (não autenticado)**: navega pela listagem pública de personagens ativos, usa busca e filtros por universo, e visualiza o ranking público (quando disponível).
-* **Estudante / Desenvolvedor Júnior**: cria conta, cadastra e edita a própria ficha de personagem, vincula sua conta do GitHub, arquiva/restaura sua ficha, percorre a trilha de aprendizagem e submete missões.
-* **Professor / Educador**: tudo que o Estudante faz, mais criar salas de aula virtuais, matricular turmas, atribuir missões e acompanhar o progresso de cada aluno.
-* **Moderador de Conteúdo**: analisa denúncias de fichas (nomes/conteúdos impróprios) e confirma ou rejeita arquivamentos.
-* **Administrador / Curador Oficial**: acesso total — cadastra e mantém as missões e módulos oficiais, gerencia permissões de moderadores, acessa o painel administrativo e executa a exclusão definitiva de dados por solicitação LGPD.
+O sistema possui 5 perfis de usuários com níveis hierárquicos e permissões estritas de acesso:
 
-## 3. Casos de uso principais
+1. **Visitante (Não Autenticado)**:
+   - Navega pela vitrine pública de personagens ativos.
+   - Aplica buscas textuais por nome/classe combinadas com filtros por universo.
+   - Consulta o ranking público dos desenvolvedores mais poderosos.
+   - Visualiza a ementa dos módulos da trilha de aprendizagem.
 
-* Visitante busca e filtra a listagem pública de personagens ativos.
-* Estudante cria uma conta (e-mail/senha) ou entra com login social do GitHub.
-* Estudante confirma o e-mail da conta via link de verificação.
-* Estudante aceita os Termos de Uso e a Política de Privacidade no cadastro.
-* Estudante recupera a senha esquecida via link enviado por e-mail.
-* Estudante edita os dados da própria conta (nome, e-mail, senha).
-* Estudante encerra a sessão atual ou todas as sessões ativas de uma vez.
-* Estudante exclui a própria conta, disparando a rotina de anonimização/exclusão LGPD.
-* Estudante cadastra sua ficha de personagem (nome, universo, classe, poder inicial).
-* Estudante vincula o username do GitHub à sua ficha e visualiza as métricas públicas (repositórios, estrelas).
-* Estudante força a atualização manual do cache de métricas do GitHub da própria ficha.
-* Estudante arquiva a própria ficha (exclusão lógica) e, se quiser, restaura uma ficha arquivada anteriormente.
-* Estudante percorre a trilha de aprendizagem (Blocos → Python → HTML/CSS → JavaScript), retomando de onde parou.
-* Estudante filtra o catálogo de missões por módulo e por dificuldade, e consulta seu próprio histórico de missões concluídas.
-* Estudante exporta os próprios dados em formato legível (portabilidade LGPD).
-* Professor cria uma sala de aula virtual, convida alunos por e-mail ou código de acesso, e remove um aluno da turma.
-* Professor exporta um relatório de progresso da turma.
-* Administrador cadastra uma missão oficial vinculada a um módulo da trilha.
-* Administrador consulta e filtra o log de auditoria por ficha, autor, ação e período.
-* Administrador acompanha métricas agregadas do sistema em um painel (usuários, fichas ativas, missões concluídas).
-* Administrador suspende ou reativa a conta de um usuário.
-* Estudante denuncia uma ficha com conteúdo impróprio e acompanha o status da própria denúncia.
-* Moderador analisa uma denúncia recebida sobre uma ficha e decide arquivá-la ou rejeitar a denúncia.
-* Administrador executa a exclusão definitiva dos dados pessoais de um usuário mediante solicitação LGPD.
+2. **Estudante / Desenvolvedor Júnior**:
+   - Cria e autentica conta via e-mail/senha ou login social OAuth do GitHub.
+   - Confirma seu endereço de e-mail e aceita obrigatoriamente os Termos de Uso e Política de Privacidade (LGPD).
+   - Cadastra, visualiza, edita e arquiva/restaura sua própria ficha de personagem (respeitando a regra de no máximo 1 ficha ativa por conta).
+   - Vincula seu nome de usuário do GitHub para enriquecer os atributos da ficha.
+   - Percorre a Trilha de Aprendizagem, consulta o catálogo de missões com filtros por módulo e dificuldade, copia códigos iniciais e submete resoluções.
+   - Denuncia personagens com nomes ou condutas impróprias e acompanha o status de sua denúncia.
+   - Exerce o direito de portabilidade de dados pessoais via exportação em formato legível (JSON).
 
-## 4. Requisitos funcionais
+3. **Professor / Educador**:
+   - Possui todos os privilégios do perfil Estudante.
+   - Cria salas de aula virtuais temáticas com códigos de acesso alfanuméricos exclusivos.
+   - Matricula e gerencia alunos em turmas, remove matrículas e acompanha a matriz de progresso pedagógico da turma.
+   - Atribui desafios personalizados e exporta relatórios de desempenho em formato estruturado (CSV).
+
+4. **Moderador de Conteúdo**:
+   - Acessa a câmara de moderação e o painel de denúncias pendentes.
+   - Analisa denúncias de fichas impróprias, deferindo-as como *procedentes* (com arquivamento compulsório da ficha) ou rejeitando-as como *improcedentes*, sempre com justificativa formal registrada em auditoria inviolável.
+   - É impedido pelas regras de negócio de analisar denúncias vinculadas à sua própria ficha.
+
+5. **Administrador / Curador Oficial**:
+   - Acesso irrestrito a todas as áreas administrativas da plataforma.
+   - Forja, cadastra, edita e gerencia as missões e módulos oficiais da Trilha Pedagógica.
+   - Consulta e filtra as crônicas completas do log de auditoria imutável por ficha, autor, tipo de ação e período temporal.
+   - Acompanha o painel de métricas agregadas do ecossistema (total de contas, personagens ativos, conclusões de missões e denúncias).
+   - Executa suspensão e reativação disciplinar de contas de usuário e a exclusão definitiva por solicitação LGPD.
+   - Reverte arquivamentos decorrentes de deliberações disciplinares de moderação.
+
+---
+
+## 3. Casos de Uso Principais
+
+* **UC01 — Autenticação e Gestão de Conta**: Cadastro de usuário com validação de senha, aceite de termos de privacidade LGPD, confirmação de e-mail, login seguro com cookie `HttpOnly`, logout de sessão única ou encerramento global de sessões ativas.
+* **UC02 — Recuperação Segura de Acesso**: Solicitação de redefinição de senha com limitação de taxa (*rate limit*), token criptográfico de uso único com expiração em 1 hora e gravação de tentativa bloqueada em auditoria.
+* **UC03 — Gestão da Ficha de Personagem**: Criação de personagem com nome, classe, universo temático (7 opções permitidas), poder inicial (0–100) e username do GitHub, garantindo unicidade de 1 ficha ativa por usuário.
+* **UC04 — Ciclo de Vida da Ficha (Arquivamento e Restauração)**: Exclusão lógica (`ativo = false`) com confirmação explícita em modal; restauração de personagem arquivado arquivando automaticamente o personagem ativo prévio na mesma transação.
+* **UC05 — Busca e Navegação no Mural Público**: Listagem paginada (10 itens/página) de personagens ativos, com ordenação padrão por nome e filtros combinados por texto e universo.
+* **UC06 — Consulta de Métricas do GitHub**: Exibição resiliente de repositórios, linguagens e estrelas a partir de cache relacional (`github_cache`, expiração de 1h), tolerando falhas externas e timeout de 3 segundos sem travar a interface.
+* **UC07 — Navegação pela Trilha Pedagógica**: Acesso não-linear aos 4 módulos encadeados (Blocos → Python → HTML/CSS → JavaScript), permitindo consultar ementas e competências técnicas.
+* **UC08 — Consulta e Filtro do Catálogo de Missões**: Filtragem dos desafios práticos por módulo e por dificuldade (Fácil, Médio, Difícil), visualizando enunciados, código template e critérios de aceite.
+* **UC09 — Submissão e Registro de Conclusão de Missão**: Submissão da resolução do desafio, gravação única por ficha na tabela `missoes_concluidas` e feedback visual instantâneo com toast e atualização de poder.
+* **UC10 — Curadoria Oficial de Missões**: Administrador cadastra novos desafios no catálogo oficial com título, enunciado, código template, critério de validação e nível de dificuldade, gerando log em auditoria.
+* **UC11 — Moderação de Conteúdo e Tribunal de Denúncias**: Estudante denuncia ficha ofensiva; moderador examina o motivo e decide pela procedência (arquivando a ficha) ou improcedência, com justificativa obrigatória.
+* **UC12 — Reversão Administrativa de Moderação**: Administrador analisa ficha arquivada por denúncia e, se justificado, restaura seu status ativo, privilégio negado a moderadores comuns.
+* **UC13 — Consulta ao Log Inviolável de Auditoria**: Administrador filtra o histórico completo de mutações do banco de dados por ficha, autor, tipo de ação e janela temporal (24h, 7d, 30d).
+* **UC14 — Gestão de Salas de Aula Virtuais**: Professor cria sala virtual, gera código de acesso único, matricula/remove alunos e acompanha a matriz de resolução de missões.
+* **UC15 — Privacidade e Portabilidade LGPD**: Usuário exporta todos os seus dados cadastrais, fichas, auditorias e histórico de missões em arquivo JSON legível.
+
+---
+
+## 4. Requisitos Funcionais
 
 ### Módulo A — Conta e Autenticação
-
-* **RF01a** — Cadastro e login por e-mail/senha, com sessão em cookie `HttpOnly`/`Secure`/`SameSite=Strict`, bloqueio após 5 tentativas falhas seguidas e fluxo de "esqueci minha senha" com token de uso único (expira em 1h) limitado a 1 solicitação por e-mail e por IP a cada 2 minutos. *(MVP)*
-* **RF01b** — Login social via OAuth do GitHub, vinculando à ficha já existente quando houver `usuario_github` correspondente. *(V2)*
-* **RF01c** — Verificação de e-mail obrigatória: ao cadastrar, um token de confirmação é enviado por e-mail; a conta fica em estado "pendente" e funcionalidades de escrita (criar/editar ficha) ficam bloqueadas até a confirmação (ver RN12). *(MVP)*
-* **RF01d** — Edição dos dados da própria conta (nome, e-mail, senha) pelo usuário autenticado; alterar o e-mail exige nova verificação (RF01c) antes de valer para login. *(MVP)*
-* **RF01e** — Logout da sessão atual, e opção separada "Encerrar todas as sessões", que revoga todos os *refresh tokens* ativos do usuário na tabela `sessoes` (ver Seção 6). *(MVP)*
-* **RF01f** — Aceite obrigatório dos Termos de Uso e da Política de Privacidade no cadastro (checkbox não pré-marcado), registrado com `timestamp` e a versão do termo aceito. *(MVP)*
-* **RF01g** — Exclusão da própria conta pelo usuário, mediante confirmação explícita (reautenticação de senha), disparando a mesma rotina de anonimização/exclusão definitiva da RNF06. *(V2)*
+* **RF01a** — Cadastro e login por e-mail e senha com hash seguro (`bcryptjs` com custo $\ge 10$), sessão persistida via cookie seguro (`HttpOnly`, `Secure`, `SameSite=Strict`), bloqueio temporário após 5 tentativas incorretas consecutivas e fluxo de "esqueci minha senha" com token de uso único (expiração de 1 hora) limitado a 1 solicitação a cada 2 minutos por e-mail/IP. *(MVP)*
+* **RF01b** — Login social via OAuth do GitHub com suporte a contas sem senha prévia, associando a conta automaticamente à ficha existente caso haja `usuario_github` idêntico. *(V2)*
+* **RF01c** — Verificação obrigatória de e-mail com token temporário; contas pendentes de confirmação em até 7 dias têm bloqueado o acesso a mutações de ficha (criar, editar, arquivar, restaurar). *(MVP)*
+* **RF01d** — Edição cadastral dos dados da conta (nome, e-mail e senha) pelo próprio usuário logado; alterar o e-mail exige nova verificação de segurança antes de liberar autenticações futuras. *(MVP)*
+* **RF01e** — Encerramento de sessão atual (`/api/auth/logout`) e opção "Encerrar todas as sessões", que revoga todos os refresh tokens ativos do usuário na tabela `sessoes`. *(MVP)*
+* **RF01f** — Aceite obrigatório dos Termos de Uso e da Política de Privacidade no momento do cadastro (checkbox não pré-marcado), gravando `timestamp` e a versão do termo aceito em conformidade com a LGPD. *(MVP)*
+* **RF01g** — Exclusão da própria conta mediante reautenticação explícita de senha, disparando a rotina de anonimização e exclusão definitiva prevista na LGPD. *(V2)*
 
 ### Módulo B — Ficha de Personagem
-
-* **RF02** — Cadastro da ficha de personagem: `nome`, `universo` (ENUM), `classe`, `poder` (0–100), `data_nascimento` (opcional), `email` de exibição (opcional), `usuario_github` (opcional). Bloqueado se o usuário já tiver uma ficha ativa (ver Seção 6). *(MVP)*
-* **RF03** — Lista fechada de universos permitidos: Marvel, DC, Star Wars, Tolkien, D&D, Anime, Games. *(MVP)*
-* **RF04** — Validação dupla (cliente e servidor) com retenção de estado do formulário em caso de erro. *(MVP)*
-* **RF05** — Exclusão lógica (arquivamento) da ficha, com confirmação explícita; ficha some da listagem pública. *(MVP)*
-* **RF06** — Restauração de ficha arquivada; se já existir outra ficha ativa, a atual é arquivada na mesma operação (ver Seção 6). *(MVP)*
+* **RF02** — Cadastro de ficha de personagem contendo: `nome` (2 a 100 caracteres), `universo` (lista fechada), `classe`, `poder` (0 a 100), `data_nascimento` (opcional), `email` de exibição (opcional) e `usuario_github` (opcional). Bloqueado se o usuário já possuir outra ficha ativa. *(MVP)*
+* **RF03** — Restrição estrita de universos permitidos aos 7 valores canônicos: **Marvel**, **DC**, **Star Wars**, **Tolkien**, **D&D**, **Anime** e **Games**. *(MVP)*
+* **RF04** — Validação bidirecional (cliente com schemas Zod e servidor nas rotas de API), com retenção de campos preenchidos e indicação visual de erro caso ocorra falha. *(MVP)*
+* **RF05** — Exclusão lógica (arquivamento) da ficha via `ativo = false`, exigindo confirmação explícita em modal antes da efetivação e removendo o personagem da vitrine pública. *(MVP)*
+* **RF06** — Restauração de ficha arquivada; se o usuário já possuir outra ficha ativa no momento da restauração, a ficha ativa atual é arquivada automaticamente na mesma transação. *(MVP)*
 
 ### Módulo C — Navegação, Listagem e Busca
+* **RF07** — Listagem paginada (10 personagens por página) no mural de personagens ativos, exibindo nome, classe, universo, avatar do GitHub e barra de poder. *(MVP)*
+* **RF07a** — Seletor de ordenação alternativa na listagem pública: ordenação por nome (padrão alfabético), por poder (decrescente) ou por data de criação (mais recentes primeiro). *(V2)*
+* **RF08** — Mecanismo de busca textual por nome e classe, combinável em tempo real com filtro por universo temático, exibindo estado vazio amigável quando nenhum resultado for retornado. *(MVP)*
+* **RF09** — Área restrita e dedicada para visualização das fichas arquivadas do próprio usuário (`/fichas/arquivadas`), com ação de restauração imediata. *(MVP)*
 
-* **RF07** — Listagem paginada (10/página) de personagens ativos, ordenada por nome por padrão. *(MVP)*
-* **RF07a** — Ordenação alternativa da listagem, selecionável pelo usuário: por nome (padrão), por poder (decrescente) ou por data de criação (mais recentes primeiro). *(V2)*
-* **RF08** — Busca textual por nome/classe combinável com filtro de universo. *(MVP)*
-* **RF09** — Área separada para visualizar e restaurar fichas arquivadas. *(MVP)*
+### Módulo D — Integração com a API do GitHub
+* **RF10** — Validação do formato do nome de usuário do GitHub no cliente e no servidor através de expressão regular oficial (`^[a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38}$`). *(MVP)*
+* **RF11** — Exibição de métricas públicas sincronizadas da conta do GitHub vinculada: avatar oficial, contagem de repositórios públicos, linguagens mais utilizadas e total de estrelas acumuladas. *(MVP)*
+* **RF12** — Timeout de 3 segundos na consulta externa à API do GitHub e persistência em cache relacional (`github_cache`) com validade de 1 hora; em caso de falha externa ou limite de taxa atingido, o sistema mantém os dados cadastrais da ficha e exibe aviso amigável sem quebrar a renderização. *(MVP)*
+* **RF12a** — Revalidação assíncrona do cache expirado em segundo plano: a interface exibe as métricas cacheadas com indicador visual de sincronização sem bloquear o carregamento da página. *(V2)*
+* **RF12b** — Botão manual "Atualizar" na visualização da ficha para revalidação imediata do cache do GitHub, limitado por taxa a 1 uso por usuário a cada 5 minutos. *(V2)*
 
-### Módulo D — Integração com o GitHub
+### Módulo E — Trilha de Aprendizagem e Catálogo Oficial de Missões
+* **RF13** — Trilha pedagógica estruturada em 4 módulos sequenciais navegáveis: **Módulo 1 — Programação em Blocos**, **Módulo 2 — Python**, **Módulo 3 — HTML e CSS** e **Módulo 4 — JavaScript**. *(MVP)*
+* **RF13a** — Exibição das competências técnicas, ementa detalhada e percentual de progresso concluído em cada módulo. *(V2)*
+* **RF14** — Catálogo oficial de missões pedagógicas contendo título, módulo vinculado, enunciado do desafio, template de código inicial, critério de aceite e nível de dificuldade. *(V2)*
+* **RF14a** — Interface do catálogo de missões (`/missoes`) com filtros combinados em tempo real por nível de dificuldade (Fácil, Médio, Difícil) e por módulo da trilha. *(V2)*
+* **RF15** — Submissão de solução de missões com registro único por ficha na tabela `missoes_concluidas`, impedindo submissões duplicadas e incrementando o poder de combate do personagem. *(V2)*
+* **RF15a** — Validação automática de submissões via Webhook do GitHub com verificação obrigatória de assinatura criptográfica HMAC SHA-256 no header `X-Hub-Signature-256`, rejeitando payloads adulterados ou sem assinatura válida. *(V2)*
+* **RF15b** — Consulta ao histórico individual de missões completadas pelo desenvolvedor na visualização detalhada da ficha e na tela da missão. *(V2)*
 
-* **RF10** — Validação do formato do username do GitHub (até 39 caracteres, alfanumérico/hífen). *(MVP)*
-* **RF11** — Exibição de métricas públicas do GitHub (avatar, repositórios, linguagens, estrelas) com link para o perfil. *(MVP)*
-* **RF12** — Timeout de 3s na chamada à API do GitHub e cache persistido em tabela relacional (`github_cache`, expiração de 1h) para contornar o limite de 60 req/h sem autenticação (5.000 req/h com `GITHUB_API_TOKEN`); falha exibe aviso sem quebrar a ficha. *(MVP)*
-* **RF12a** — Revalidação do cache expirado é assíncrona e não bloqueia a renderização da ficha: a UI exibe os últimos dados em cache com um indicador "atualizando" enquanto a nova consulta acontece em segundo plano. *(V2)*
-* **RF12b** — Botão manual "Atualizar agora" para forçar a revalidação do cache antes da expiração natural, limitado a 1 uso por usuário a cada 5 minutos (evita contornar o cache e estourar o rate limit da API do GitHub). *(V2)*
+#### Catálogo Oficial das 4 Missões Iniciais da Trilha
 
-### Módulo E — Trilha de Aprendizagem e Missões
+1. **Missão 1 (Módulo 1 — Programação em Blocos)**:
+   - **ID**: `1` | **Módulo**: `1` (Programação em Blocos)
+   - **Título**: *O Despertar dos Blocos Mágicos*
+   - **Dificuldade**: `facil` (Fácil)
+   - **Enunciado**: *Nas ruínas ancestrais de Algoritmia, o herói precisa atravessar um corredor repleto de armadilhas para alcançar o Baú de Runas Sagradas. Monte uma sequência algorítmica visual utilizando estruturas de repetição e verificações condicionais: enquanto o caminho à frente estiver livre, o personagem deve avançar uma casa; caso encontre um obstáculo mágico, deve desarmá-lo antes de prosseguir; ao atingir a câmara final, deve abrir o baú para coletar o fragmento de código.*
+   - **Código Inicial (Template)**:
+     ```text
+     // Algoritmo Visual de Blocos
+     enquanto (caminhoLivre()) {
+       andarFrente();
+       se (detectarArmadilha()) {
+         desarmarArmadilha();
+       }
+     }
+     se (alcancouBau()) {
+       abrirBau();
+     }
+     ```
+   - **Critério de Aceite**: *O algoritmo deve guiar o herói pelo labirinto alcançando o baú em no máximo 10 iterações, sem colidir com obstáculos e desarmando todas as armadilhas encontradas.*
 
-* **RF13** — Trilha de aprendizagem em 4 módulos encadeados: Blocos → Python → HTML/CSS → JavaScript, como conteúdo estático navegável. *(MVP)*
-* **RF13a** — O progresso do estudante na trilha (módulos/missões já concluídos) é salvo e exibido visualmente ao retomar a navegação. *(V2)*
-* **RF14** — Cadastro e curadoria de missões por módulo (título, enunciado, código inicial, critério de aceite, dificuldade). *(V2)*
-* **RF14a** — Listagem de missões filtrável por módulo e por dificuldade (fácil, médio, difícil). *(V2)*
-* **RF15** — Registro de conclusão de missão (única por ficha), validada automaticamente ou por aprovação manual do professor. *(V2)*
-* **RF15a** — Quando a validação for automática via Webhook do GitHub, o servidor deve verificar a assinatura HMAC do payload recebido antes de processar, rejeitando requisições não assinadas ou com assinatura inválida. *(V2)*
-* **RF15b** — O estudante consulta o próprio histórico de missões concluídas, com título da missão e data de conclusão. *(V2)*
+2. **Missão 2 (Módulo 2 — Python)**:
+   - **ID**: `2` | **Módulo**: `2` (Python)
+   - **Título**: *O Cálculo do Dano Crítico*
+   - **Dificuldade**: `facil` (Fácil)
+   - **Enunciado**: *Na taverna dos magos de batalha, os aventureiros necessitam de um cálculo preciso do dano de suas magias elementais contra chefes de masmorra. Escreva em Python a função `calcular_dano(ataque_base: int, multiplicador: float, bonus: int) -> int` que recebe os pontos de ataque base, um multiplicador de acerto crítico e um bônus numérico. Se o multiplicador for estritamente superior a 1.5, o valor de bônus deve ser somado antes de aplicar o arredondamento final. O dano resultante nunca pode ser negativo e deve retornar como um número inteiro.*
+   - **Código Inicial (Template)**:
+     ```python
+     def calcular_dano(ataque_base: int, multiplicador: float, bonus: int) -> int:
+         """Calcula o dano final desferido pelo herói contra criaturas sombrias.
+         
+         Args:
+             ataque_base: Força inicial do golpe (inteiro >= 0).
+             multiplicador: Fator crítico (float >= 1.0).
+             bonus: Valor adicional concedido por runas e equipamentos.
+         
+         Returns:
+             Dano total resultante em número inteiro não-negativo.
+         """
+         # TODO: Implemente a lógica do cálculo de dano aqui
+         pass
+     ```
+   - **Critério de Aceite**: *A função deve retornar um número inteiro (int), arredondar valores fracionários corretamente, aplicar o bônus apenas quando o multiplicador for maior que 1.5 e garantir resultado >= 0 em todos os casos de teste.*
+
+3. **Missão 3 (Módulo 3 — HTML e CSS)**:
+   - **ID**: `3` | **Módulo**: `3` (HTML e CSS)
+   - **Título**: *O Estandarte Responsivo da Guilda*
+   - **Dificuldade**: `medio` (Médio)
+   - **Enunciado**: *Os arautos da guilda precisam anunciar seus guerreiros no mural público do reino com alta legibilidade em qualquer dispositivo. Construa a estrutura semântica em HTML5 de um cartão de herói com a tag `<section class="guilda-card">`, contendo cabeçalho com o nome e classe, uma área de avatar/brasão e a lista de atributos de poder (0–100). Em seguida, aplique regras CSS (Flexbox ou CSS Grid) para que em telas menores que 640px os elementos se reorganizem verticalmente em coluna única e com contraste mínimo de cores atendendo ao padrão WCAG AA.*
+   - **Código Inicial (Template)**:
+     ```html
+     <!-- Estandarte do Herói da Guilda -->
+     <section class="guilda-card">
+       <header class="guilda-header">
+         <h2 class="heroi-nome">Aragorn</h2>
+         <span class="heroi-classe">Guardião do Norte</span>
+       </header>
+       
+       <div class="guilda-brasao">
+         <img src="/brasao-tolkien.svg" alt="Brasão da Casa Telcontar" />
+       </div>
+
+       <dl class="guilda-atributos">
+         <dt>Poder de Combate:</dt>
+         <dd class="poder-valor">88/100</dd>
+         <dt>Universo:</dt>
+         <dd>Tolkien</dd>
+       </dl>
+     </section>
+
+     <style>
+       .guilda-card {
+         /* TODO: Defina layout com display: flex ou grid */
+         padding: 1.5rem;
+       }
+       @media (max-width: 640px) {
+         /* TODO: Responsividade para dispositivos móveis */
+       }
+     </style>
+     ```
+   - **Critério de Aceite**: *Uso exclusivo de tags HTML5 semânticas (<section>, <header>, <dl>), layout responsivo adaptável com media query em 640px e taxa de contraste de cores acessível (mínimo 4.5:1 para texto normal).*
+
+4. **Missão 4 (Módulo 4 — JavaScript)**:
+   - **ID**: `4` | **Módulo**: `4` (JavaScript)
+   - **Título**: *O Feitiço da API Assíncrona*
+   - **Dificuldade**: `dificil` (Difícil)
+   - **Enunciado**: *Para invocar os feitiços mais poderosos do reino, o grimório digital precisa consultar os tomos sagrados armazenados em uma API remota. Implemente a função assíncrona `buscarPoderesGuilda(url: string)` em JavaScript moderno (ES6+). A função deve realizar a requisição HTTP usando `fetch()`, validar se a resposta retornou status 200 (lançando exceção amigável caso ocorra erro 4xx ou 5xx com `!res.ok`), converter os dados para JSON, extrair o array de magias e retorná-lo ordenado de forma decrescente pelo nível de poder arcano de cada item.*
+   - **Código Inicial (Template)**:
+     ```javascript
+     /**
+      * Consulta o grimório sagrado consumindo a API REST assíncrona.
+      * @param {string} url - Endereço do endpoint do grimório da guilda.
+      * @returns {Promise<Array<{ nome: string, poder: number }>>} Lista ordenada de poderes.
+      */
+     async function buscarPoderesGuilda(url) {
+       try {
+         // TODO: Realize o fetch com verificação de status HTTP (200 OK)
+         // TODO: Trate respostas 4xx e 5xx lançando erro com mensagem descritiva
+         // TODO: Retorne o array de poderes ordenado pelo poder (decrescente)
+       } catch (erro) {
+         console.error("Falha ao conjurar feitiço de consulta:", erro.message);
+         throw erro;
+       }
+     }
+     ```
+   - **Critério de Aceite**: *A função deve usar async/await com try/catch, verificar res.ok rejeitando respostas HTTP de erro, tratar exceções de rede e retornar a Promise resolvida com os poderes ordenados por nível de poder (decrescente).*
 
 ### Módulo F — Gamificação, Poder e Ranking
-
-* **RF16** — Cálculo automático e neutro de poder combinando missões concluídas e atividade real do GitHub, sem penalizar perfis privados ou iniciantes. *(Futuro)*
-* **RF17** — Ranking público paginado dos personagens mais poderosos, com filtros por universo/período. *(Futuro)*
-* **RF17a** — Sistema de conquistas (badges) por marcos de progresso (ex.: primeira missão concluída, 7 dias seguidos de atividade), exibidas na ficha do personagem. *(Futuro)*
+* **RF16** — Algoritmo de cálculo de poder dinâmico equilibrado combinando a soma ponderada de missões completadas com a atividade verificada no GitHub, mantendo o resultado estritamente no intervalo [0, 100]. *(Futuro)*
+* **RF17** — Ranking público paginado dos heróis mais poderosos com ordenação por poder decrescente e filtros por universo e período. *(Futuro)*
+* **RF17a** — Sistema de badges e conquistas desbloqueáveis por marcos de código (primeira missão superada, 7 dias seguidos de commits, mestre de módulo). *(Futuro)*
 
 ### Módulo G — Auditoria e Moderação
+* **RF18** — Gravação obrigatória, automática e inviolável em banco de dados (`auditoria`) de toda operação de criação, edição, arquivamento e restauração de fichas. *(MVP)*
+* **RF18a** — Painel de Crônicas de Auditoria (`/admin/auditoria`) acessível por administradores com filtros combinados por ficha, autor, tipo de ação e período (24 horas, 7 dias, 30 dias). *(V2)*
+* **RF19** — Envio de denúncia por estudantes autenticados contra personagens que apresentem ofensas, preconceito ou spam, registrando denunciante, motivo e estado inicial `pendente`. *(V2)*
+* **RF19a** — Análise pelo moderador no tribunal (`/admin/denuncias`): deferimento como *procedente* (arquiva automaticamente a ficha acusada) ou indeferimento como *improcedente*, com justificativa de texto obrigatória registrada em auditoria. O moderador é impedido de deliberar sobre a própria ficha. *(V2)*
+* **RF19b** — Acompanhamento em tempo real do status de denúncias efetuadas pelo estudante denunciante. *(V2)*
 
-* **RF18** — Auditoria inviolável de toda criação, alteração, arquivamento e restauração de ficha. *(MVP)*
-* **RF18a** — Administrador consulta e filtra o log de auditoria por ficha, autor, tipo de ação e período de data. *(V2)*
-* **RF19** — Denúncia de fichas com conteúdo impróprio (nome ou dados ofensivos/spam), registrada com motivo, denunciante e status (pendente/procedente/improcedente). *(V2)*
-* **RF19a** — Moderação da denúncia: o moderador confirma (arquiva a ficha) ou rejeita, com justificativa registrada em auditoria; um moderador não pode analisar denúncia relacionada à própria ficha. *(V2)*
-* **RF19b** — O denunciante acompanha o status da própria denúncia (pendente, procedente ou improcedente). *(V2)*
+### Módulo H — Salas de Aula Virtuais
+* **RF20** — Espaço do Educador (`/salas`): criação de salas de aula virtuais com geração de código alfanumérico único de acesso compartilhado com os alunos. *(V2)*
+* **RF20a** — Ingresso de estudantes na sala mediante preenchimento do código de acesso com registro em `sala_alunos`. *(V2)*
+* **RF20b** — Desmatrícula e remoção de alunos da sala pelo professor proprietário da turma. *(V2)*
+* **RF20c** — Exportação tabular (CSV) de relatório de progresso e missões concluídas pelos alunos matriculados na sala. *(V2)*
 
-### Módulo H — Salas de Aula para Professores
+### Módulo I — Privacidade e Direitos do Titular (LGPD)
+* **RF21** — Configurações de privacidade na conta para ocultar e-mail pessoal e controlar visibilidade no ranking público. *(V2)*
+* **RF21a** — Exportação completa dos dados pessoais do titular em formato JSON legível (`/api/usuarios/exportar-dados`), atendendo ao direito de portabilidade do Art. 18 da LGPD. *(V2)*
 
-* **RF20** — Espaço do educador: professor cria salas virtuais, gera código de acesso para alunos, acompanha a matriz de progresso da turma e atribui missões personalizadas. *(V2)*
-* **RF20a** — Convite de alunos para a sala por e-mail, além do código de acesso reutilizável. *(V2)*
-* **RF20b** — Remoção de um aluno de uma sala pelo professor responsável. *(V2)*
-* **RF20c** — Exportação (CSV) do relatório de progresso da turma pelo professor. *(V2)*
+### Módulo J — Gestão Administrativa
+* **RF22** — Painel central administrativo (`/admin`) exibindo cards de métricas em tempo real: total de contas cadastradas, fichas ativas, missões na trilha e denúncias pendentes. *(V2)*
+* **RF23** — Suspensão e reativação disciplinar de contas de usuário por administradores (`/admin/usuarios`), bloqueando autenticações sem exclusão de dados. *(V2)*
 
-### Módulo I — Privacidade e Dados Pessoais
+---
 
-* **RF21** — Configurações de privacidade: opções no painel do usuário para ocultar e-mail pessoal e/ou optar por não aparecer no ranking público. *(V2)*
-* **RF21a** — Exportação dos próprios dados pessoais em formato legível (JSON), atendendo ao direito de portabilidade previsto na LGPD. *(V2)*
-
-### Módulo J — Administração do Sistema
-
-* **RF22** — Painel administrativo com métricas agregadas: total de usuários cadastrados, total de fichas ativas e total de missões concluídas no período selecionado. *(V2)*
-* **RF23** — Suspensão e reativação de contas de usuário pelo Administrador (bloqueia login sem excluir os dados), distinta da exclusão definitiva por LGPD (RF01g). *(V2)*
-
-## 5. Requisitos não funcionais
+## 5. Requisitos Não Funcionais, Regras de Negócio e Interface
 
 ### Regras de Negócio (RN)
-
-* **RN01** — O atributo `poder` deve se manter estritamente no intervalo entre 0 e 100.
-* **RN02** — O campo `universo` aceita estritamente os 7 valores da lista fechada: Marvel, DC, Star Wars, Tolkien, D&D, Anime, Games.
-* **RN03** — A remoção de fichas é obrigatoriamente uma exclusão lógica (`ativo = 0`); toda instrução de alteração ou exclusão no banco exige a cláusula `WHERE id = :id`.
-* **RN04** — Os registros da tabela `auditoria` são de leitura exclusiva — não podem sofrer `UPDATE` nem `DELETE` por nenhum usuário do sistema.
-* **RN05** — Apenas usuários com perfil Administrador podem criar ou alterar as missões e os módulos oficiais da plataforma.
-* **RN06** — Cada usuário pode ter no máximo **1 (uma) ficha ativa** por vez; para criar ou restaurar uma nova ficha enquanto já existe uma ativa, a ficha ativa anterior deve ser arquivada na mesma transação.
-* **RN07** — Um mesmo e-mail não pode estar associado a mais de uma conta (unicidade reforçada tanto pela validação do servidor quanto pela constraint `UNIQUE` em `usuarios.email`).
-* **RN08** — O `nome` da ficha deve ter entre 2 e 100 caracteres e não pode ser composto só de espaços ou caracteres especiais.
-* **RN09** — Um mesmo `usuario_github` não pode estar vinculado simultaneamente a fichas ativas de contas diferentes — evita que duas pessoas reivindiquem o mesmo perfil do GitHub ao mesmo tempo.
-* **RN10** — Quando uma denúncia é confirmada como procedente por um moderador, a ficha é arquivada automaticamente; reverter esse arquivamento exige aprovação de um Administrador, nunca do moderador que analisou a denúncia sozinho.
-* **RN11** — Sessões expiram automaticamente após 30 minutos de inatividade, independentemente do prazo de validade do cookie (até 7 dias) definido em RF01a.
-* **RN12** — Contas com e-mail não verificado (RF01c) em até 7 dias após o cadastro têm bloqueado o acesso a funcionalidades de escrita (criar, editar, arquivar ou restaurar ficha) até a confirmação.
-* **RN13** — Uma missão só pode ser removida fisicamente do catálogo se nenhuma ficha a tiver concluído (`missoes_concluidas` sem registros para ela); caso já tenha sido concluída por alguém, é apenas desativada para novos registros, preservando o histórico de quem já a completou.
+* **RN01** — O atributo `poder` deve se manter estritamente entre 0 e 100, imposto por validação no servidor e constraint `CHECK (poder BETWEEN 0 AND 100)` no banco.
+* **RN02** — O campo `universo` aceita exclusivamente os 7 valores permitidos: Marvel, DC, Star Wars, Tolkien, D&D, Anime e Games.
+* **RN03** — O arquivamento de fichas é exclusivamente lógico (`ativo = FALSE`); instruções de mutação exigem cláusula `WHERE id = :id`.
+* **RN04** — Registros da tabela `auditoria` são estritamente de leitura exclusiva (*append-only*) — nenhuma operação de `UPDATE` ou `DELETE` é permitida.
+* **RN05** — Apenas usuários autenticados com papel `admin` podem criar, editar ou alterar as missões e módulos oficiais da plataforma.
+* **RN06** — Cada usuário pode ter no máximo **1 (uma) ficha ativa** simultaneamente. A criação ou restauração de uma ficha enquanto outra está ativa arquiva automaticamente a anterior na mesma transação.
+* **RN07** — O endereço de e-mail deve ser estritamente único por usuário, garantido por validação e constraint `UNIQUE` no banco de dados.
+* **RN08** — O `nome` da ficha deve ter entre 2 e 100 caracteres, não podendo ser composto exclusivamente por espaços em branco ou símbolos isolados.
+* **RN09** — Um mesmo `usuario_github` não pode estar associado simultaneamente a mais de uma ficha ativa em contas diferentes.
+* **RN10** — Denúncias julgadas procedentes por moderadores provocam o arquivamento automático da ficha; a reversão desse arquivamento exige deliberação estrita de um Administrador.
+* **RN11** — Sessões expiram após 30 minutos de inatividade do usuário, independentemente da expiração nominal do token JWT/cookie.
+* **RN12** — Contas com e-mail não verificado após 7 dias do cadastro têm bloqueadas todas as ações de escrita em personagens (criar, editar, arquivar, restaurar).
+* **RN13** — Uma missão do catálogo oficial só pode ser deletada do banco se nenhuma ficha a tiver concluído; caso já tenha conclusões registradas em `missoes_concluidas`, ela pode apenas ser inativada para novas submissões.
 
 ### Requisitos Não Funcionais (RNF)
-
-* **RNF01** — Senhas nunca em texto puro — hash com `bcrypt` (custo ≥ 10) ou `Argon2id`; contas OAuth-only podem não ter senha, mas precisam de pelo menos um método de login válido.
-* **RNF02** — Todo formulário validado no servidor, nunca só no cliente.
-* **RNF03** — Toda consulta ao banco via *prepared statements* (nunca concatenação de string).
-* **RNF04** — Escape de saída (HTML/JSX) contra XSS; proteção CSRF nas rotas que alteram estado.
-* **RNF05** — Nenhuma credencial no código-fonte — tudo em variável de ambiente (`DATABASE_URL`, `SESSION_SECRET`/`JWT_SECRET`, `GITHUB_OAUTH_CLIENT_ID/SECRET`, `GITHUB_API_TOKEN`, `SMTP_*`).
-* **RNF06** — A exclusão definitiva por solicitação LGPD deve, na mesma rotina: anonimizar os dados pessoais, encerrar todas as sessões ativas, revogar *refresh tokens* (tabela `sessoes`, ver Seção 6) e apagar tokens pendentes de reset de senha.
-* **RNF07** — Apenas o dono da ficha ou administradores podem editar/arquivar/restaurar — checagem sempre no servidor.
-* **RNF08** — Timeout de 3s nas chamadas à API do GitHub; cache relacional de 1h (não em memória de processo, por ser arquitetura Serverless).
-* **RNF09** — Deploy contínuo via GitHub → Vercel; banco relacional em nuvem (ex.: Neon Postgres).
-* **RNF10** — Backups automáticos diários, retenção mínima de 7 dias (RPO ≤ 24h).
-* **RNF11** — Erros 5xx logados no servidor (timestamp, rota, stack trace) sem expor detalhes ao usuário.
-* **RNF12** — Coleta de dados restrita ao necessário, com mecanismos de correção e exclusão pelo titular (LGPD).
-* **RNF13** — Rate limiting geral nas rotas públicas (listagem, busca, ranking): no máximo 100 requisições por minuto por IP, retornando HTTP 429 acima do limite.
-* **RNF14** — HTTPS obrigatório em todas as rotas, com cabeçalho `Strict-Transport-Security` habilitado (redirecionamento automático de HTTP para HTTPS é garantido pela Vercel).
-* **RNF15** — Cabeçalhos de segurança HTTP obrigatórios em toda resposta: `Content-Security-Policy`, `X-Content-Type-Options: nosniff` e `X-Frame-Options: DENY`.
-* **RNF16** — Tempo de resposta: páginas de listagem e busca devem responder em até 1s no percentil 95, desconsiderando a latência de chamadas à API externa do GitHub.
-* **RNF17** — Logs estruturados em JSON, com um identificador de requisição (`request_id`) que correlaciona todas as entradas geradas por uma mesma chamada, para facilitar a depuração de incidentes.
-* **RNF18** — Compatibilidade garantida com as versões atuais dos navegadores Chrome, Firefox e Edge.
-* **RNF19** — Idioma padrão da interface: Português do Brasil (pt-BR), incluindo mensagens de erro e e-mails transacionais.
+* **RNF01** — Armazenamento seguro de senhas através de hash criptográfico `bcryptjs` com custo mínimo de 10 rounds; senhas em texto plano são proibidas.
+* **RNF02** — Validação integral no servidor para todas as rotas de API, espelhando e complementando as validações do cliente com Zod.
+* **RNF03** — Prevenção de SQL Injection através de consultas parametrizadas (*prepared statements*) via Prisma ORM.
+* **RNF04** — Escape automático contra XSS no front-end React/Next.js e sanitização de inputs; proteção contra falsificação de requisições (CSRF).
+* **RNF05** — Proibição estrita de credenciais e chaves secretas no código-fonte; uso obrigatório de variáveis de ambiente (`DATABASE_URL`, `SESSION_SECRET`, etc.).
+* **RNF06** — Exclusão definitiva LGPD com expurgo ou anonimização imediata de dados pessoais, revogação de tokens de sessão e cancelamento de resets pendentes.
+* **RNF07** — Verificação rigorosa de autorização no servidor: apenas o proprietário da ficha ou um administrador podem executar mutações sobre ela.
+* **RNF08** — Resiliência na API do GitHub com timeout estrito de 3 segundos e cache em banco relacional (`github_cache`) válido por 1 hora.
+* **RNF09** — Arquitetura de deploy contínuo (CI/CD) via GitHub conectado à Vercel com execução nativa em funções Serverless e banco gerenciado Neon PostgreSQL.
+* **RNF10** — Políticas de backup automatizado diário com retenção mínima de 7 dias (Recovery Point Objective $\le$ 24h).
+* **RNF11** — Registro seguro de erros 5xx no servidor sem exposição de stack traces ou detalhes sensíveis ao usuário final.
+* **RNF12** — Minimização de dados: coleta restrita às necessidades operacionais e pedagógicas da plataforma em conformidade com a LGPD.
+* **RNF13** — Mitigação de abuso e ataques de força bruta com *rate limiting* nas rotas públicas e de autenticação.
+* **RNF14** — HTTPS obrigatório em todas as conexões com cabeçalho `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`.
+* **RNF15** — Cabeçalhos HTTP de segurança obrigatórios configurados no `next.config.mjs`: `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff` e `Referrer-Policy: strict-origin-when-cross-origin`.
+* **RNF16** — Desempenho: tempo de resposta do servidor inferior a 1 segundo no percentil 95 para rotas de listagem e consulta em cache.
+* **RNF17** — Registros de log estruturados em formato JSON com identificadores de rastreamento para depuração.
+* **RNF18** — Compatibilidade completa com os navegadores modernos (Google Chrome, Mozilla Firefox, Microsoft Edge e Safari).
+* **RNF19** — Idioma e localização padrão em Português do Brasil (pt-BR) em todas as telas, mensagens de feedback e erros.
 
 ### Requisitos de Interface (RI)
+* **RI01** — Retenção de estado: os formulários preservam os dados já preenchidos caso ocorra erro de validação.
+* **RI02** — Diálogo modal com foco gerenciado e backdrop com blur para confirmação de ações destrutivas (arquivamento de ficha, suspensão de conta).
+* **RI03** — Estados vazios amigáveis com ilustrações/ícones temáticos em buscas sem retorno ou catálogos vazios.
+* **RI04** — Design responsivo fluido com Tailwind CSS adaptado para dispositivos móveis, tablets e telas widescreen.
+* **RI05** — Acessibilidade visual com alto contraste cromático atendendo aos critérios WCAG AA e navegação completa por teclado.
+* **RI06** — Indicadores visuais animados (spinners e skeletons) durante requisições assíncronas.
+* **RI07** — Mensagens de erro contextuais e específicas exibidas diretamente abaixo de cada campo do formulário.
+* **RI08** — Sinalização visual explícita com asterisco vermelho em campos de preenchimento obrigatório.
+* **RI09** — Feedback visual flutuante (Toast com auto-dismiss em 4 segundos) após operações bem-sucedidas.
+* **RI10** — Componentes de paginação com exibição explícita da página atual, total de páginas e manutenção de filtros ativos na navegação.
 
-* **RI01** — Formulários devem reter os dados já digitados e sinalizar visualmente os campos com erro após uma falha de validação (ver RF04).
-* **RI02** — Toda ação destrutiva (ex.: arquivar ficha, excluir conta) exige confirmação explícita via modal antes de ser executada (ver RF05, RF01g).
-* **RI03** — Buscas sem resultado exibem uma mensagem de estado vazio amigável (ex.: "Nenhum personagem encontrado"), nunca uma tela em branco (ver RF08).
-* **RI04** — A interface deve ser responsiva, plenamente utilizável tanto em dispositivos móveis quanto em desktop.
-* **RI05** — A interface deve atender a critérios mínimos de acessibilidade: alto contraste e navegação completa por teclado.
-* **RI06** — Indicadores de carregamento (spinner ou skeleton) durante chamadas assíncronas (ex.: consulta à API do GitHub, RF12a), nunca uma tela travada sem feedback visual.
-* **RI07** — Mensagens de erro específicas por campo do formulário, e não uma única mensagem genérica cobrindo o formulário inteiro.
-* **RI08** — Campos obrigatórios são sinalizados visualmente (ex.: asterisco) antes mesmo da tentativa de envio do formulário.
-* **RI09** — Confirmação visual (toast/snackbar) após ações bem-sucedidas: ficha salva, missão concluída, e-mail de verificação/reset enviado.
-* **RI10** — Componentes de paginação (listagem, ranking) sempre exibem a página atual e o total de páginas, e mantêm os filtros ativos ao navegar entre páginas.
+---
 
-## 6. Modelo de dados (DER simples)
+## 6. Modelo de Dados
 
-**Tabelas principais e relacionamentos:**
-* `usuarios` (1) — (N) `fichas`: cada ficha pertence a exatamente um usuário; um usuário pode ter várias fichas ao longo do tempo, mas **no máximo uma ativa por vez**.
-* `usuarios` (1) — (N) `tokens_reset_senha`: tokens de recuperação de senha, um usuário pode ter vários (histórico), mas só o mais recente e não usado é válido.
-* `usuarios` (1) — (N) `auditoria`: cada ação registrada tem um autor.
-* `fichas` (1) — (N) `auditoria`: cada ficha acumula um histórico de ações.
-* `fichas` (1) — (1) `github_cache`: relacionamento indireto via `usuario_github` (chave natural), não FK — o cache é compartilhado entre fichas que apontem para o mesmo username.
-* `modulos` (1) — (N) `missoes`: cada missão pertence a um módulo da trilha.
-* `fichas` (N) — (N) `missoes`, via `missoes_concluidas`: registra qual ficha concluiu qual missão, uma única vez cada (`UNIQUE(ficha_id, missao_id)`).
-* `usuarios` (1) — (N) `sessoes`: cada sessão/refresh token ativo pertence a um usuário (suporta RF01e — logout de todas as sessões — e RNF06).
-* `fichas` (1) — (N) `denuncias`: uma ficha pode acumular várias denúncias; cada denúncia tem um denunciante (`usuario_id`, nullable se a conta for excluída depois) e, quando analisada, um moderador responsável (RF19/RF19a/RF19b).
-* `usuarios` (1) — (N) `salas` (como professor): um professor pode criar várias salas; `usuarios` (N) — (N) `salas` (como aluno), via `sala_alunos`, suportando RF20/RF20a/RF20b.
+### 6.1 Relacionamentos entre Entidades
+* `usuarios` (1) — (N) `fichas`: um usuário pode criar múltiplas fichas, mas **no máximo uma ativa por vez**.
+* `usuarios` (1) — (N) `tokens_reset_senha`: tokens com expiração para redefinição segura de credenciais.
+* `usuarios` (1) — (N) `sessoes`: controle de refresh tokens para encerramento de sessões ativas.
+* `usuarios` (1) — (N) `auditoria`: rastreamento do autor de cada mutação.
+* `fichas` (1) — (N) `auditoria`: crônicas das ações sofridas por cada personagem.
+* `fichas` (1) — (1) `github_cache`: relacionamento indireto por chave natural (`usuario_github`).
+* `modulos` (1) — (N) `missoes`: cada módulo encadeia seus desafios oficiais.
+* `fichas` (N) — (N) `missoes`, via `missoes_concluidas`: registro imutável com chave única `UNIQUE(ficha_id, missao_id)`.
+* `fichas` (1) — (N) `denuncias`: denúncias submetidas por estudantes e julgadas por moderadores.
+* `usuarios` (1) — (N) `salas` (professor) e `usuarios` (N) — (N) `salas` via `sala_alunos` (estudantes matriculados).
 
-**Diagrama entidade-relacionamento:**
+### 6.2 Diagrama Entidade-Relacionamento (Mermaid)
 
 ```mermaid
 erDiagram
     USUARIOS ||--o{ FICHAS : "possui"
     USUARIOS ||--o{ TOKENS_RESET_SENHA : "solicita"
     USUARIOS ||--o{ AUDITORIA : "autor de"
-    FICHAS ||--o{ AUDITORIA : "gera"
-    FICHAS ||--o{ MISSOES_CONCLUIDAS : "registra em"
-    MISSOES ||--o{ MISSOES_CONCLUIDAS : "registrada em"
-    MODULOS ||--o{ MISSOES : "contém"
+    FICHAS ||--o{ AUDITORIA : "registrada em"
+    FICHAS ||--o{ MISSOES_CONCLUIDAS : "completa"
+    MISSOES ||--o{ MISSOES_CONCLUIDAS : "concluida por"
+    MODULOS ||--o{ MISSOES : "contem"
     USUARIOS ||--o{ SESSOES : "autentica"
     FICHAS ||--o{ DENUNCIAS : "recebe"
     USUARIOS ||--o{ DENUNCIAS : "denuncia / modera"
-    USUARIOS ||--o{ SALAS : "leciona (professor)"
-    USUARIOS ||--o{ SALA_ALUNOS : "participa (aluno)"
-    SALAS ||--o{ SALA_ALUNOS : "matricula"
+    USUARIOS ||--o{ SALAS : "leciona"
+    USUARIOS ||--o{ SALA_ALUNOS : "matricula-se"
+    SALAS ||--o{ SALA_ALUNOS : "contem"
 
     USUARIOS {
         int id PK
         varchar nome
         varchar email UK
-        varchar senha_hash "nullable"
-        varchar github_oauth_id UK "nullable"
+        varchar senha_hash
+        varchar github_oauth_id UK
         varchar tipo
         int tentativas_login
         timestamp bloqueado_ate
         boolean email_verificado
         timestamp termos_aceitos_em
         varchar termos_versao
+        timestamp criado_em
     }
     SESSOES {
         int id PK
@@ -229,6 +366,15 @@ erDiagram
         varchar token_hash
         timestamp expira_em
         boolean usado
+        timestamp criado_em
+    }
+    GITHUB_CACHE {
+        varchar usuario_github PK
+        text avatar_url
+        int repos_publicos
+        jsonb linguagens
+        int total_estrelas
+        timestamp atualizado_em
     }
     FICHAS {
         int id PK
@@ -237,16 +383,43 @@ erDiagram
         varchar universo
         varchar classe
         int poder
+        date data_nascimento
+        varchar email
         varchar usuario_github
-        boolean ativo "1 ativa por usuario_id"
+        boolean ativo
+        timestamp criado_em
+        timestamp atualizado_em
+    }
+    MODULOS {
+        int id PK
+        int ordem UK
+        varchar titulo
+        varchar tecnologia
+        text descricao
+    }
+    MISSOES {
+        int id PK
+        int modulo_id FK
+        varchar titulo
+        text enunciado
+        text codigo_inicial
+        text criterio_aceite
+        varchar dificuldade
+        timestamp criado_em
+    }
+    MISSOES_CONCLUIDAS {
+        int id PK
+        int ficha_id FK
+        int missao_id FK
+        timestamp data_conclusao
     }
     DENUNCIAS {
         int id PK
         int ficha_id FK
-        int denunciante_id FK "nullable"
-        int moderador_id FK "nullable"
+        int denunciante_id FK
+        int moderador_id FK
         text motivo
-        varchar status "pendente | procedente | improcedente"
+        varchar status
         timestamp criado_em
         timestamp resolvido_em
     }
@@ -263,65 +436,38 @@ erDiagram
         int aluno_id FK
         timestamp entrou_em
     }
-    GITHUB_CACHE {
-        varchar usuario_github PK "chave natural, sem FK"
-        text avatar_url
-        int repos_publicos
-        jsonb linguagens
-        int total_estrelas
-        timestamp atualizado_em
-    }
-    MODULOS {
-        int id PK
-        int ordem UK
-        varchar titulo
-        varchar tecnologia
-    }
-    MISSOES {
-        int id PK
-        int modulo_id FK
-        varchar titulo
-        text enunciado
-        text criterio_aceite
-        varchar dificuldade "facil | medio | dificil"
-    }
-    MISSOES_CONCLUIDAS {
-        int id PK
-        int ficha_id FK
-        int missao_id FK
-        timestamp data_conclusao
-    }
     AUDITORIA {
         int id PK
-        int ficha_id FK "nullable"
-        int autor_id FK "nullable"
+        int ficha_id FK
+        int autor_id FK
         varchar acao
         text detalhes
+        timestamp data_hora
     }
 ```
 
-*Nota: `github_cache` está desenhada solta no diagrama porque se liga a `fichas` por chave natural (`usuario_github`), não por chave estrangeira — de propósito, para o cache ser compartilhado entre fichas diferentes que apontem para o mesmo usuário do GitHub, em vez de duplicado por ficha.*
+### 6.3 Schema DDL em PostgreSQL
 
 ```sql
--- Tabela de Usuários / Autenticação
-CREATE TABLE usuarios (
+-- 1. Tabela de Usuários / Autenticação
+CREATE TABLE IF NOT EXISTS usuarios (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
-    senha_hash VARCHAR(255),              -- NULL permitido: conta pode ser só OAuth (RF01b)
-    github_oauth_id VARCHAR(50) UNIQUE,   -- preenchido no login OAuth (RF01b)
+    senha_hash VARCHAR(255),
+    github_oauth_id VARCHAR(50) UNIQUE,
     tipo VARCHAR(20) DEFAULT 'estudante' CHECK (tipo IN ('estudante', 'professor', 'moderador', 'admin')),
     tentativas_login INT DEFAULT 0,
-    bloqueado_ate TIMESTAMP,              -- suporta o RF01a (bloqueio após 5 falhas)
-    email_verificado BOOLEAN DEFAULT FALSE,  -- suporta RF01c / RN12
-    termos_aceitos_em TIMESTAMP,             -- suporta RF01f
-    termos_versao VARCHAR(20),               -- suporta RF01f
+    bloqueado_ate TIMESTAMP,
+    email_verificado BOOLEAN DEFAULT FALSE,
+    termos_aceitos_em TIMESTAMP,
+    termos_versao VARCHAR(20),
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT chk_metodo_login CHECK (senha_hash IS NOT NULL OR github_oauth_id IS NOT NULL)
 );
 
--- Tokens de recuperação de senha (RF01a)
-CREATE TABLE tokens_reset_senha (
+-- 2. Tokens de Recuperação de Senha
+CREATE TABLE IF NOT EXISTS tokens_reset_senha (
     id SERIAL PRIMARY KEY,
     usuario_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
     token_hash VARCHAR(255) NOT NULL,
@@ -330,8 +476,8 @@ CREATE TABLE tokens_reset_senha (
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Sessões / refresh tokens ativos (RF01e — logout de todas as sessões; RNF06)
-CREATE TABLE sessoes (
+-- 3. Sessões e Refresh Tokens Ativos
+CREATE TABLE IF NOT EXISTS sessoes (
     id SERIAL PRIMARY KEY,
     usuario_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
     refresh_token_hash VARCHAR(255) NOT NULL,
@@ -340,21 +486,18 @@ CREATE TABLE sessoes (
     revogado BOOLEAN DEFAULT FALSE
 );
 
--- Cache persistido das métricas públicas do GitHub (RF12) — relacional por design,
--- para sobreviver a instâncias efêmeras da arquitetura Serverless/Vercel.
-CREATE TABLE github_cache (
+-- 4. Cache Persistido de Métricas do GitHub
+CREATE TABLE IF NOT EXISTS github_cache (
     usuario_github VARCHAR(39) PRIMARY KEY,
     avatar_url TEXT,
     repos_publicos INT DEFAULT 0,
     linguagens JSONB,
     total_estrelas INT DEFAULT 0,
     atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    -- Expiração de 1h aplicada na leitura: se (NOW() - atualizado_em) > 1h, a aplicação
-    -- revalida contra a API do GitHub e faz UPSERT nesta linha.
 );
 
--- Tabela de Fichas de Personagem
-CREATE TABLE fichas (
+-- 5. Fichas de Personagem
+CREATE TABLE IF NOT EXISTS fichas (
     id SERIAL PRIMARY KEY,
     usuario_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
     nome VARCHAR(100) NOT NULL,
@@ -369,24 +512,19 @@ CREATE TABLE fichas (
     atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Impõe "1 ficha ativa por usuário" no nível do banco, mesmo que a aplicação
--- falhe em checar isso antes de gravar (proteção contra race conditions).
-CREATE UNIQUE INDEX idx_ficha_ativa_unica_por_usuario
-ON fichas (usuario_id)
-WHERE ativo = TRUE;
+-- Unicidade de ficha ativa por usuário (RN06)
+CREATE UNIQUE INDEX IF NOT EXISTS idx_ficha_ativa_unica_por_usuario
+ON fichas (usuario_id) WHERE ativo = TRUE;
 
--- Impõe a RN09: um usuario_github não pode estar vinculado a mais de uma ficha ativa ao mesmo tempo.
-CREATE UNIQUE INDEX idx_github_unico_em_ficha_ativa
-ON fichas (usuario_github)
-WHERE ativo = TRUE AND usuario_github IS NOT NULL;
+-- Unicidade de username do GitHub por ficha ativa (RN09)
+CREATE UNIQUE INDEX IF NOT EXISTS idx_github_unico_em_ficha_ativa
+ON fichas (usuario_github) WHERE ativo = TRUE AND usuario_github IS NOT NULL;
 
--- Índices de performance para busca/filtro (RF08) e listagem (RF07)
-CREATE INDEX idx_fichas_busca_ativa ON fichas (ativo, universo, nome);
--- Índice de performance para o ranking público (RF17)
-CREATE INDEX idx_fichas_ranking ON fichas (ativo, poder DESC);
+CREATE INDEX IF NOT EXISTS idx_fichas_busca_ativa ON fichas (ativo, universo, nome);
+CREATE INDEX IF NOT EXISTS idx_fichas_ranking ON fichas (ativo, poder DESC);
 
--- Tabela de Módulos da Trilha Pedagógica
-CREATE TABLE modulos (
+-- 6. Módulos da Trilha Pedagógica
+CREATE TABLE IF NOT EXISTS modulos (
     id SERIAL PRIMARY KEY,
     ordem INT UNIQUE NOT NULL,
     titulo VARCHAR(100) NOT NULL,
@@ -394,20 +532,20 @@ CREATE TABLE modulos (
     descricao TEXT NOT NULL
 );
 
--- Tabela de Missões / Exercícios
-CREATE TABLE missoes (
+-- 7. Catálogo de Missões / Desafios
+CREATE TABLE IF NOT EXISTS missoes (
     id SERIAL PRIMARY KEY,
     modulo_id INT REFERENCES modulos(id) ON DELETE CASCADE,
     titulo VARCHAR(150) NOT NULL,
     enunciado TEXT NOT NULL,
     codigo_inicial TEXT,
     criterio_aceite TEXT NOT NULL,
-    dificuldade VARCHAR(10) DEFAULT 'facil' CHECK (dificuldade IN ('facil', 'medio', 'dificil')), -- RF14a
+    dificuldade VARCHAR(10) DEFAULT 'facil' CHECK (dificuldade IN ('facil', 'medio', 'dificil')),
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabela de Missões Concluídas
-CREATE TABLE missoes_concluidas (
+-- 8. Registro de Missões Concluídas
+CREATE TABLE IF NOT EXISTS missoes_concluidas (
     id SERIAL PRIMARY KEY,
     ficha_id INT REFERENCES fichas(id) ON DELETE CASCADE,
     missao_id INT REFERENCES missoes(id) ON DELETE CASCADE,
@@ -415,8 +553,8 @@ CREATE TABLE missoes_concluidas (
     UNIQUE(ficha_id, missao_id)
 );
 
--- Denúncias de fichas (RF19 / RF19a / RF19b)
-CREATE TABLE denuncias (
+-- 9. Denúncias de Fichas
+CREATE TABLE IF NOT EXISTS denuncias (
     id SERIAL PRIMARY KEY,
     ficha_id INT REFERENCES fichas(id) ON DELETE CASCADE,
     denunciante_id INT REFERENCES usuarios(id) ON DELETE SET NULL,
@@ -427,8 +565,8 @@ CREATE TABLE denuncias (
     resolvido_em TIMESTAMP
 );
 
--- Salas de aula virtuais (RF20)
-CREATE TABLE salas (
+-- 10. Salas Virtuais de Educadores
+CREATE TABLE IF NOT EXISTS salas (
     id SERIAL PRIMARY KEY,
     professor_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
     nome VARCHAR(100) NOT NULL,
@@ -436,8 +574,7 @@ CREATE TABLE salas (
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Matrícula de alunos em salas (RF20a / RF20b)
-CREATE TABLE sala_alunos (
+CREATE TABLE IF NOT EXISTS sala_alunos (
     id SERIAL PRIMARY KEY,
     sala_id INT REFERENCES salas(id) ON DELETE CASCADE,
     aluno_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
@@ -445,8 +582,8 @@ CREATE TABLE sala_alunos (
     UNIQUE(sala_id, aluno_id)
 );
 
--- Tabela de Auditoria Inviolável
-CREATE TABLE auditoria (
+-- 11. Auditoria Inviolável (Append-Only)
+CREATE TABLE IF NOT EXISTS auditoria (
     id SERIAL PRIMARY KEY,
     ficha_id INT REFERENCES fichas(id) ON DELETE SET NULL,
     autor_id INT REFERENCES usuarios(id) ON DELETE SET NULL,
@@ -456,81 +593,116 @@ CREATE TABLE auditoria (
 );
 ```
 
-## 7. Critérios de aceite
+### 6.4 Dados Iniciais de Seed (Módulos e Missões)
 
-* **Cadastro com sucesso de ficha de personagem (RF02 / RF03 / RF10)**
-  Dado que o estudante está autenticado e preenche o formulário com Nome="Aragorn", Universo="Tolkien", Classe="Ranger", Poder=85 e Username GitHub="aragorn-dev",
-  quando clica em "Salvar Ficha",
-  então o sistema valida no servidor, insere o registro com `ativo = 1`, grava "CRIACAO" em `auditoria` e exibe a nova ficha na listagem pública.
+```sql
+-- Inserção dos 4 Módulos Estruturados
+INSERT INTO modulos (id, ordem, titulo, tecnologia, descricao) VALUES
+(1, 1, 'Módulo 1 — Programação em Blocos', 'Blocos / Lógica', 'Fundamentos de lógica algorítmica, variáveis, estruturas condicionais e laços visuais de repetição.'),
+(2, 2, 'Módulo 2 — Python', 'Python', 'Sintaxe limpa, estruturas de dados, funções puras, tipagem estática e algoritmos orientados a objetos.'),
+(3, 3, 'Módulo 3 — HTML e CSS', 'HTML/CSS', 'Estruturação semântica com HTML5, acessibilidade web (WCAG) e estilização responsiva com CSS Grid e Flexbox.'),
+(4, 4, 'Módulo 4 — JavaScript', 'JavaScript', 'Interatividade no navegador, manipulação da árvore DOM, Promises e consumo de APIs assíncronas com fetch.')
+ON CONFLICT (ordem) DO UPDATE SET
+  titulo = EXCLUDED.titulo,
+  tecnologia = EXCLUDED.tecnologia,
+  descricao = EXCLUDED.descricao;
 
-* **Rejeição de validação com retenção de estado (RF04)**
-  Dado que o usuário preenche o formulário com Poder=150 (inválido),
-  quando envia o formulário,
-  então o servidor rejeita a gravação, retorna HTTP 422 com a mensagem "O poder deve estar entre 0 e 100" e mantém os demais campos preenchidos como foram digitados.
+-- Inserção das 4 Missões Oficiais
+INSERT INTO missoes (id, modulo_id, titulo, enunciado, codigo_inicial, criterio_aceite, dificuldade) VALUES
+(
+  1, 1, 'O Despertar dos Blocos Mágicos',
+  'Nas ruínas ancestrais de Algoritmia, o herói precisa atravessar um corredor repleto de armadilhas para alcançar o Baú de Runas Sagradas. Monte uma sequência algorítmica visual utilizando estruturas de repetição e verificações condicionais: enquanto o caminho à frente estiver livre, o personagem deve avançar uma casa; caso encontre um obstáculo mágico, deve desarmá-lo antes de prosseguir; ao atingir a câmara final, deve abrir o baú para coletar o fragmento de código.',
+  '// Algoritmo Visual de Blocos\nenquanto (caminhoLivre()) {\n  andarFrente();\n  se (detectarArmadilha()) {\n    desarmarArmadilha();\n  }\n}\nse (alcancouBau()) {\n  abrirBau();\n}',
+  'O algoritmo deve guiar o herói pelo labirinto alcançando o baú em no máximo 10 iterações, sem colidir com obstáculos e desarmando todas as armadilhas encontradas.',
+  'facil'
+),
+(
+  2, 2, 'O Cálculo do Dano Crítico',
+  'Na taverna dos magos de batalha, os aventureiros necessitam de um cálculo preciso do dano de suas magias elementais contra chefes de masmorra. Escreva em Python a função calcular_dano(ataque_base: int, multiplicador: float, bonus: int) -> int que recebe os pontos de ataque base, um multiplicador de acerto crítico e um bônus numérico. Se o multiplicador for estritamente superior a 1.5, o valor de bônus deve ser somado antes de aplicar o arredondamento final. O dano resultante nunca pode ser negativo e deve retornar como um número inteiro.',
+  'def calcular_dano(ataque_base: int, multiplicador: float, bonus: int) -> int:\n    """Calcula o dano final desferido pelo herói contra criaturas sombrias."""\n    pass',
+  'A função deve retornar um número inteiro (int), arredondar valores fracionários corretamente, aplicar o bônus apenas quando o multiplicador for maior que 1.5 e garantir resultado >= 0 em todos os casos de teste.',
+  'facil'
+),
+(
+  3, 3, 'O Estandarte Responsivo da Guilda',
+  'Os arautos da guilda precisam anunciar seus guerreiros no mural público do reino com alta legibilidade em qualquer dispositivo. Construa a estrutura semântica em HTML5 de um cartão de herói com a tag <section class="guilda-card">, contendo cabeçalho com o nome e classe, uma área de avatar/brasão e a lista de atributos de poder (0–100). Em seguida, aplique regras CSS (Flexbox ou CSS Grid) para que em telas menores que 640px os elementos se reorganizem verticalmente em coluna única e com contraste mínimo de cores atendendo ao padrão WCAG AA.',
+  '<!-- Estandarte do Herói da Guilda -->\n<section class="guilda-card">\n  <header class="guilda-header">\n    <h2 class="heroi-nome">Aragorn</h2>\n    <span class="heroi-classe">Guardião do Norte</span>\n  </header>\n  <div class="guilda-brasao">\n    <img src="/brasao-tolkien.svg" alt="Brasão da Casa Telcontar" />\n  </div>\n  <dl class="guilda-atributos">\n    <dt>Poder de Combate:</dt>\n    <dd class="poder-valor">88/100</dd>\n    <dt>Universo:</dt>\n    <dd>Tolkien</dd>\n  </dl>\n</section>',
+  'Uso exclusivo de tags HTML5 semânticas (<section>, <header>, <dl>), layout responsivo adaptável com media query em 640px e taxa de contraste de cores acessível (mínimo 4.5:1 para texto normal).',
+  'medio'
+),
+(
+  4, 4, 'O Feitiço da API Assíncrona',
+  'Para invocar os feitiços mais poderosos do reino, o grimório digital precisa consultar os tomos sagrados armazenados em uma API remota. Implemente a função assíncrona buscarPoderesGuilda(url: string) em JavaScript moderno (ES6+). A função deve realizar a requisição HTTP usando fetch(), validar se a resposta retornou status 200 (lançando exceção amigável caso ocorra erro 4xx ou 5xx com !res.ok), converter os dados para JSON, extrair o array de magias e retorná-lo ordenado de forma decrescente pelo nível de poder arcano de cada item.',
+  'async function buscarPoderesGuilda(url) {\n  try {\n    // TODO: Implemente a requisição com fetch e tratamento de erros\n  } catch (erro) {\n    throw erro;\n  }\n}',
+  'A função deve usar async/await com try/catch, verificar res.ok rejeitando respostas HTTP de erro, tratar exceções de rede e retornar a Promise resolvida com os poderes ordenados por nível de poder (decrescente).',
+  'dificil'
+)
+ON CONFLICT (id) DO UPDATE SET
+  modulo_id = EXCLUDED.modulo_id,
+  titulo = EXCLUDED.titulo,
+  enunciado = EXCLUDED.enunciado,
+  codigo_inicial = EXCLUDED.codigo_inicial,
+  criterio_aceite = EXCLUDED.criterio_aceite,
+  dificuldade = EXCLUDED.dificuldade;
+```
 
-* **Exclusão lógica e ocultação da listagem (RF05)**
-  Dado que o dono de uma ficha clica em "Arquivar Ficha" e confirma,
-  quando a requisição é processada,
-  então o sistema executa `UPDATE fichas SET ativo = 0 WHERE id = :id`, registra "ARQUIVAMENTO" em auditoria e remove a ficha da listagem de ativos imediatamente.
+---
 
-* **Resiliência na integração com a API do GitHub (RF11 / RF12)**
-  Dado que a API do GitHub está indisponível ou o limite de requisições foi excedido,
-  quando o usuário abre a ficha de um desenvolvedor vinculado ao GitHub,
-  então o sistema aguarda até 3s, exibe os dados cadastrais normalmente e mostra o aviso "Métricas do GitHub indisponíveis no momento".
+## 7. Critérios de Aceite (BDD)
 
-* **Unicidade de ficha ativa (RF06 / RN06)**
-  Dado que o usuário já possui a ficha ativa "Aragorn" e tenta restaurar a ficha arquivada "Legolas",
-  quando confirma a restauração,
-  então o sistema arquiva "Aragorn", ativa "Legolas" na mesma transação, grava as duas ações em auditoria e a listagem pública passa a mostrar só "Legolas" como ficha ativa desse usuário.
+* **Cenário 1: Cadastro com sucesso de ficha de personagem (RF02, RF03, RF10, RN01, RN02)**
+  - **Dado** que o desenvolvedor está autenticado e submete o formulário com `Nome="Aragorn"`, `Universo="Tolkien"`, `Classe="Ranger"`, `Poder=88` e `usuario_github="aragorn-dev"`,
+  - **Quando** o servidor processa a requisição,
+  - **Então** valida os parâmetros, persiste o registro com `ativo = TRUE`, insere log `CRIACAO` na tabela `auditoria` e o novo personagem passa a ser listado no mural público com poder 88/100.
 
-* **Rate limiting no "esqueci minha senha" (RF01a)**
-  Dado que o mesmo e-mail solicitou um token de redefinição há 40 segundos,
-  quando solicita outro token antes de completar 2 minutos,
-  então o sistema responde HTTP 429, não envia novo e-mail, exibe a mensagem genérica "Se o e-mail existir, um novo link será enviado em instantes" e registra a tentativa bloqueada em auditoria.
+* **Cenário 2: Rejeição de universo inválido com retenção de dados (RF03, RF04, RN02, RI01)**
+  - **Dado** que o usuário preenche o formulário com `Universo="Naruto"` (fora da lista fechada permitida),
+  - **Quando** submete o formulário,
+  - **Então** o servidor rejeita a gravação com código HTTP 422, exibe a mensagem de erro específica no campo de universo e mantém os dados já digitados intactos.
 
-## 8. Decisão de stack e deploy
+* **Cenário 3: Unicidade de ficha ativa com arquivamento transacional (RF06, RN06)**
+  - **Dado** que o estudante já possui a ficha ativa "Goku" e restaura a ficha arquivada "Vegeta",
+  - **Quando** a solicitação é confirmada no modal,
+  - **Então** o sistema arquiva "Goku" (`ativo = FALSE`), ativa "Vegeta" (`ativo = TRUE`) na mesma transação, grava ambas as operações em auditoria e a vitrine pública exibe apenas "Vegeta" como personagem ativo daquela conta.
 
-**Stack escolhida:** Next.js (React + rotas de API/Node.js no mesmo projeto) no front-end e back-end, PostgreSQL como banco relacional (provedor gerenciado em nuvem, ex.: Neon Postgres), Prisma ou `pg` com *prepared statements* como camada de acesso ao banco.
+* **Cenário 4: Resiliência na consulta ao GitHub com fallback (RF11, RF12, RNF08)**
+  - **Dado** que a API do GitHub atinge o rate limit ou excede o timeout de 3 segundos,
+  - **Quando** qualquer visitante acessa o card da ficha do personagem,
+  - **Então** a página exibe os dados cadastrais locais normalmente, exibe o aviso "Métricas do GitHub indisponíveis no momento" e mantém a interface funcional sem quebras.
 
-**Destino de deploy:** Vercel, com deploy contínuo a cada `git push` na branch `main` do repositório GitHub, conforme o fluxo descrito na Fase 6 da apostila.
+* **Cenário 5: Rate limiting na redefinição de credenciais (RF01a, RNF13)**
+  - **Dado** que um usuário solicitou um token de reset de senha há 45 segundos,
+  - **Quando** tenta emitir uma nova solicitação antes de completar a janela de 2 minutos,
+  - **Então** o servidor responde HTTP 429, bloqueia o disparo de novo e-mail e grava a tentativa em auditoria com ação `TENTATIVA_RESET_BLOQUEADA`.
 
-**Por quê essa combinação:**
-* Next.js roda nativamente como funções Serverless na Vercel — não depende de um servidor persistente tradicional (diferente de PHP + MySQL "puro", que a apostila alerta não rodar nativamente na Vercel), o que elimina a necessidade de um caminho alternativo de hospedagem.
-* O Postgres gerenciado (Neon) se integra diretamente pelo painel da Vercel, criando a variável `DATABASE_URL` automaticamente e mantendo backups automáticos (ver RNF08).
-* A própria natureza Serverless é o motivo pelo qual o cache do GitHub (RF12) e a sessão do usuário (RF01a) são desenhados para não depender de memória do processo — cada instância pode ser efêmera, então tudo que precisa persistir entre requisições vive no banco (`github_cache`, cookie assinado, ou tabela de sessão), nunca em variável global do servidor.
-* Não há dependência de nenhuma stack incompatível com o destino: a stack foi escolhida *depois* de decidir o destino de deploy, e não o contrário — evitando o problema que a apostila descreve como "chegar na Fase 6 sem ter decidido isso".
+* **Cenário 6: Navegação completa e acesso às missões da trilha (RF13, RF14, RF14a)**
+  - **Dado** que o usuário acessa `/trilha`,
+  - **Quando** clica no "Módulo 2 — Python",
+  - **Então** a página `/trilha/2` exibe a ementa do módulo e o desafio prático "O Cálculo do Dano Crítico" com botão para acessar `/missoes/2`, mantendo a navegação rápida para os módulos 1, 3 e 4 acessível.
 
-* **Rejeição de universo fora da lista permitida (RF03)**
-  Dado que o usuário envia o formulário de cadastro com Universo="Naruto" (fora da lista fechada),
-  quando a requisição chega ao servidor,
-  então o `CHECK` da tabela `fichas` e a validação server-side rejeitam a gravação, retornam HTTP 422 e exibem "Universo inválido. Escolha entre: Marvel, DC, Star Wars, Tolkien, D&D, Anime, Games".
+* **Cenário 7: Curadoria de missão oficial por Administrador (RF14, RN05)**
+  - **Dado** que um usuário com perfil `admin` preenche o formulário na forja administrativa `/admin/missoes`,
+  - **Quando** envia o formulário com título, módulo, enunciado, código template e critério de aceite válidos,
+  - **Então** a missão é inserida no catálogo oficial da trilha, grava ação `CRIACAO_MISSAO` em auditoria e passa a ser exibida imediatamente para os estudantes em `/missoes`.
 
-* **Listagem paginada de personagens ativos (RF07)**
-  Dado que existem 25 fichas ativas cadastradas,
-  quando o visitante acessa a listagem pública na página 2,
-  então o sistema exibe os registros de 11 a 20 (10 por página), ordenados por nome, mantendo os parâmetros de página e busca ao trocar de página.
+* **Cenário 8: Tribunal de Moderação e Arquivamento Disciplinar (RF19, RF19a, RN10)**
+  - **Dado** que existe uma denúncia pendente contra a ficha "Spam_Bot_123",
+  - **Quando** o moderador examina os fatos e aprova a denúncia como procedente com justificativa,
+  - **Então** a ficha é arquivada compulsoriamente (`ativo = FALSE`), o status da denúncia muda para `procedente` e a ação `MODERACAO_ARQUIVAMENTO` é registrada em auditoria inviolável.
 
-* **Busca combinada com filtro de universo (RF08)**
-  Dado que existem fichas de classes "Mago" em universos diferentes,
-  quando o visitante busca o texto "mago" e filtra por Universo="D&D",
-  então o sistema retorna apenas as fichas com "mago" no nome/classe **e** universo "D&D"; se nenhuma bater com os dois critérios, exibe o estado vazio "Nenhum personagem encontrado".
+---
 
-* **Visualização e restauração a partir da área de arquivados (RF09)**
-  Dado que o usuário possui uma ficha arquivada ("ativo = FALSE"),
-  quando acessa a área "Fichas Arquivadas",
-  então o sistema lista apenas suas fichas inativas, oculta-as da listagem pública padrão e exibe o botão "Restaurar" para cada uma (sujeito à RN06 — ver Cenário "Unicidade de ficha ativa").
+## 8. Decisão de Stack e Deploy
 
-* **Validação do formato de username do GitHub (RF10)**
-  Dado que o usuário informa `usuario_github = "-invalido-"` (começa com hífen),
-  quando salva a ficha,
-  então o servidor rejeita o valor por não bater com a expressão regular de username do GitHub, retorna HTTP 422 e exibe "Nome de usuário do GitHub inválido".
+* **Front-end & Back-end Unificados**: **Next.js 14 (App Router)** com React 18 e TypeScript estrito (`strict: true`).  
+  *Justificativa*: A unificação de front-end reativo com rotas de API Serverless no mesmo projeto elimina custos de infraestrutura separada, oferece renderização híbrida (SSR e geração estática para páginas pedagógicas) e roda de forma nativa e otimizada na nuvem da Vercel.
 
-* **Navegação pela trilha de aprendizagem (RF13)**
-  Dado que o estudante autenticado acessa a página da trilha,
-  quando seleciona o "Módulo 2 — Python",
-  então o sistema exibe o conteúdo do módulo e mantém os Módulos 1, 3 e 4 acessíveis na navegação, sem exigir conclusão sequencial obrigatória no MVP.
+* **Estilização e Componentes Visuais**: **Tailwind CSS** com tokens semânticos customizados do universo RPG (`quest-dark`, `quest-surface`, `quest-border`, `quest-accent`), ícones modernos da biblioteca `lucide-react` e composição utilitária com `clsx` e `tailwind-merge`.
 
-* **Registro de auditoria em toda mutação de ficha (RF18)**
-  Dado que qualquer ficha é criada, editada, arquivada ou restaurada,
-  quando a operação é concluída com sucesso,
-  então o sistema grava uma linha em `auditoria` com `ficha_id`, `autor_id`, `acao` e `data_hora`; se a gravação da auditoria falhar, a operação principal não é revertida, mas um log de erro de servidor é disparado (RNF09).
+* **Camada de Validação**: **Zod**, garantindo validação de esquemas espelhada e consistente tanto no formulário do cliente quanto nas rotas de API do servidor (RNF02).
+
+* **Camada de Dados & ORM**: **PostgreSQL** relacional hospedado na nuvem (Neon Database), acessado via **Prisma ORM** com instanciamento singleton para evitar esgotamento de conexões em ambientes Serverless (`src/lib/db.ts`). Para desenvolvimento e testes locais contínuos, há suporte híbrido ao data store em memória com persistência reativa (`src/lib/admin-store.ts`).
+
+* **Destino e Estratégia de Deploy**: **Vercel** com integração e entrega contínua (CI/CD) disparada automaticamente a cada push na branch `main` do GitHub.
+  - A stack foi definida previamente considerando as restrições da Vercel (arquitetura Serverless efêmera), o que motivou a decisão arquitetural de persistir o cache do GitHub (`github_cache`) e as sessões em tabelas relacionais do banco, e não na memória volátil do processo Node.js.
+  - O banco de dados gerenciado em nuvem (Neon) provê conexões seguras com pooling, backups automatizados com retenção mínima de 7 dias (RNF10) e variável `DATABASE_URL` gerenciada via painel seguro da Vercel (RNF05).

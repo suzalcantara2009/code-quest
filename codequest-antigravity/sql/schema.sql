@@ -96,6 +96,7 @@ CREATE TABLE IF NOT EXISTS missoes (
     id SERIAL PRIMARY KEY,
     modulo_id INT REFERENCES modulos(id) ON DELETE CASCADE,
     titulo VARCHAR(150) NOT NULL,
+    teoria TEXT,
     enunciado TEXT NOT NULL,
     codigo_inicial TEXT,
     criterio_aceite TEXT NOT NULL,

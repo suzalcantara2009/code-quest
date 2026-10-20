@@ -168,9 +168,20 @@ const MISSOES_INICIAIS: MissaoAdmin[] = [
     modulo_id: 1,
     modulo_titulo: 'Módulo 1 — Programação em Blocos',
     titulo: 'O Despertar dos Blocos Mágicos',
-    enunciado: 'Monte um algoritmo visual com repetição finita para guiar o herói pelo labirinto de pedra até o baú de runas.',
-    codigo_inicial: '// Algoritmo de blocos visual\nenquanto(caminhoLivre()) {\n  andarFrente();\n}',
-    criterio_aceite: 'O herói deve alcançar o baú em no máximo 10 iterações sem colidir com obstáculos.',
+    enunciado:
+      'Nas ruínas ancestrais de Algoritmia, o herói precisa atravessar um corredor repleto de armadilhas para alcançar o Baú de Runas Sagradas. Monte uma sequência algorítmica visual utilizando estruturas de repetição e verificações condicionais: enquanto o caminho à frente estiver livre, o personagem deve avançar uma casa; caso encontre um obstáculo mágico, deve desarmá-lo antes de prosseguir; ao atingir a câmara final, deve abrir o baú para coletar o fragmento de código.',
+    codigo_inicial: `// Algoritmo Visual de Blocos
+enquanto (caminhoLivre()) {
+  andarFrente();
+  se (detectarArmadilha()) {
+    desarmarArmadilha();
+  }
+}
+se (alcancouBau()) {
+  abrirBau();
+}`,
+    criterio_aceite:
+      'O algoritmo deve guiar o herói pelo labirinto alcançando o baú em no máximo 10 iterações, sem colidir com obstáculos e desarmando todas as armadilhas encontradas.',
     dificuldade: 'facil',
     criado_em: new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString(),
     total_conclusoes: 42,
@@ -180,9 +191,23 @@ const MISSOES_INICIAIS: MissaoAdmin[] = [
     modulo_id: 2,
     modulo_titulo: 'Módulo 2 — Python',
     titulo: 'O Cálculo do Dano Crítico',
-    enunciado: 'Escreva uma função calcular_dano(ataque_base, multiplicador, bonus) que calcule o dano total aplicando bônus caso o multiplicador seja maior que 1.5.',
-    codigo_inicial: 'def calcular_dano(ataque_base: int, multiplicador: float, bonus: int) -> int:\n    # Implemente sua lógica aqui\n    pass',
-    criterio_aceite: 'Retornar valor inteiro com arredondamento correto para 5 casos de teste.',
+    enunciado:
+      'Na taverna dos magos de batalha, os aventureiros necessitam de um cálculo preciso do dano de suas magias elementais contra chefes de masmorra. Escreva em Python a função calcular_dano(ataque_base: int, multiplicador: float, bonus: int) -> int que recebe os pontos de ataque base, um multiplicador de acerto crítico e um bônus numérico. Se o multiplicador for estritamente superior a 1.5, o valor de bônus deve ser somado antes de aplicar o arredondamento final. O dano resultante nunca pode ser negativo e deve retornar como um número inteiro.',
+    codigo_inicial: `def calcular_dano(ataque_base: int, multiplicador: float, bonus: int) -> int:
+    """Calcula o dano final desferido pelo herói contra criaturas sombrias.
+    
+    Args:
+        ataque_base: Força inicial do golpe (inteiro >= 0).
+        multiplicador: Fator crítico (float >= 1.0).
+        bonus: Valor adicional concedido por runas e equipamentos.
+    
+    Returns:
+        Dano total resultante em número inteiro não-negativo.
+    """
+    # TODO: Implemente a lógica do cálculo de dano aqui
+    pass`,
+    criterio_aceite:
+      'A função deve retornar um número inteiro (int), arredondar valores fracionários corretamente, aplicar o bônus apenas quando o multiplicador for maior que 1.5 e garantir resultado >= 0 em todos os casos de teste.',
     dificuldade: 'facil',
     criado_em: new Date(Date.now() - 20 * 24 * 3600 * 1000).toISOString(),
     total_conclusoes: 28,
@@ -192,9 +217,38 @@ const MISSOES_INICIAIS: MissaoAdmin[] = [
     modulo_id: 3,
     modulo_titulo: 'Módulo 3 — HTML e CSS',
     titulo: 'O Estandarte Responsivo da Guilda',
-    enunciado: 'Crie uma seção semântica <section class="guilda-card"> com CSS Grid ou Flexbox que reorganize o brasão e os atributos para telas móveis.',
-    codigo_inicial: '<section class="guilda-card">\n  <!-- Adicione o brasão e os atributos -->\n</section>',
-    criterio_aceite: 'Layout semântico responsivo com breakpoint em 640px e contraste acessível.',
+    enunciado:
+      'Os arautos da guilda precisam anunciar seus guerreiros no mural público do reino com alta legibilidade em qualquer dispositivo. Construa a estrutura semântica em HTML5 de um cartão de herói com a tag <section class="guilda-card">, contendo cabeçalho com o nome e classe, uma área de avatar/brasão e a lista de atributos de poder (0–100). Em seguida, aplique regras CSS (Flexbox ou CSS Grid) para que em telas menores que 640px os elementos se reorganizem verticalmente em coluna única e com contraste mínimo de cores atendendo ao padrão WCAG AA.',
+    codigo_inicial: `<!-- Estandarte do Herói da Guilda -->
+<section class="guilda-card">
+  <header class="guilda-header">
+    <h2 class="heroi-nome">Aragorn</h2>
+    <span class="heroi-classe">Guardião do Norte</span>
+  </header>
+  
+  <div class="guilda-brasao">
+    <img src="/brasao-tolkien.svg" alt="Brasão da Casa Telcontar" />
+  </div>
+
+  <dl class="guilda-atributos">
+    <dt>Poder de Combate:</dt>
+    <dd class="poder-valor">88/100</dd>
+    <dt>Universo:</dt>
+    <dd>Tolkien</dd>
+  </dl>
+</section>
+
+<style>
+  .guilda-card {
+    /* TODO: Defina layout com display: flex ou grid */
+    padding: 1.5rem;
+  }
+  @media (max-width: 640px) {
+    /* TODO: Responsividade para dispositivos móveis */
+  }
+</style>`,
+    criterio_aceite:
+      'Uso exclusivo de tags HTML5 semânticas (<section>, <header>, <dl>), layout responsivo adaptável com media query em 640px e taxa de contraste de cores acessível (mínimo 4.5:1 para texto normal).',
     dificuldade: 'medio',
     criado_em: new Date(Date.now() - 15 * 24 * 3600 * 1000).toISOString(),
     total_conclusoes: 19,
@@ -204,9 +258,25 @@ const MISSOES_INICIAIS: MissaoAdmin[] = [
     modulo_id: 4,
     modulo_titulo: 'Módulo 4 — JavaScript',
     titulo: 'O Feitiço da API Assíncrona',
-    enunciado: 'Implemente uma função async buscarPoderesGuilda(url) que consuma a API REST com fetch, tratando erros 4xx/5xx com mensagens amigáveis.',
-    codigo_inicial: 'async function buscarPoderesGuilda(url) {\n  // Implemente com try/catch e fetch\n}',
-    criterio_aceite: 'Tratar rejeições de Promise e retornar array tipado de poderes.',
+    enunciado:
+      'Para invocar os feitiços mais poderosos do reino, o grimório digital precisa consultar os tomos sagrados armazenados em uma API remota. Implemente a função assíncrona buscarPoderesGuilda(url: string) em JavaScript moderno (ES6+). A função deve realizar a requisição HTTP usando fetch(), validar se a resposta retornou status 200 (lançando exceção amigável caso ocorra erro 4xx ou 5xx com !res.ok), converter os dados para JSON, extrair o array de magias e retorná-lo ordenado de forma decrescente pelo nível de poder arcano de cada item.',
+    codigo_inicial: `/**
+ * Consulta o grimório sagrado consumindo a API REST assíncrona.
+ * @param {string} url - Endereço do endpoint do grimório da guilda.
+ * @returns {Promise<Array<{ nome: string, poder: number }>>} Lista ordenada de poderes.
+ */
+async function buscarPoderesGuilda(url) {
+  try {
+    // TODO: Realize o fetch com verificação de status HTTP (200 OK)
+    // TODO: Trate respostas 4xx e 5xx lançando erro com mensagem descritiva
+    // TODO: Retorne o array de poderes ordenado pelo poder (decrescente)
+  } catch (erro) {
+    console.error("Falha ao conjurar feitiço de consulta:", erro.message);
+    throw erro;
+  }
+}`,
+    criterio_aceite:
+      'A função deve usar async/await com try/catch, verificar res.ok rejeitando respostas HTTP de erro, tratar exceções de rede e retornar a Promise resolvida com os poderes ordenados por nível de poder (decrescente).',
     dificuldade: 'dificil',
     criado_em: new Date(Date.now() - 5 * 24 * 3600 * 1000).toISOString(),
     total_conclusoes: 11,
@@ -484,6 +554,64 @@ export async function listarMissoesAdmin(): Promise<MissaoAdmin[]> {
   return [...store.missoes].sort(
     (a, b) => new Date(b.criado_em).getTime() - new Date(a.criado_em).getTime()
   );
+}
+
+/**
+ * RF14a: Catálogo público de missões filtrável por módulo e por dificuldade.
+ */
+export async function listarMissoesPublicas(filtros?: {
+  dificuldade?: string;
+  modulo_id?: number;
+}): Promise<MissaoAdmin[]> {
+  let resultado = [...store.missoes];
+
+  if (filtros?.dificuldade && filtros.dificuldade !== '') {
+    resultado = resultado.filter((m) => m.dificuldade === filtros.dificuldade);
+  }
+
+  if (filtros?.modulo_id && Number(filtros.modulo_id) > 0) {
+    resultado = resultado.filter((m) => m.modulo_id === Number(filtros.modulo_id));
+  }
+
+  return resultado.sort((a, b) => a.id - b.id);
+}
+
+export async function obterMissaoPorId(id: number): Promise<MissaoAdmin | null> {
+  const missao = store.missoes.find((m) => m.id === id);
+  return missao ? { ...missao } : null;
+}
+
+export function listarModulos() {
+  return [
+    {
+      id: 1,
+      ordem: 1,
+      titulo: 'Módulo 1 — Programação em Blocos',
+      tecnologia: 'Blocos / Lógica',
+      descricao: 'Fundamentos de lógica algorítmica, variáveis, estruturas condicionais e laços visuais de repetição.',
+    },
+    {
+      id: 2,
+      ordem: 2,
+      titulo: 'Módulo 2 — Python',
+      tecnologia: 'Python',
+      descricao: 'Sintaxe limpa, estruturas de dados, funções puras, tipagem estática e algoritmos orientados a objetos.',
+    },
+    {
+      id: 3,
+      ordem: 3,
+      titulo: 'Módulo 3 — HTML e CSS',
+      tecnologia: 'HTML/CSS',
+      descricao: 'Estruturação semântica com HTML5, acessibilidade web (WCAG) e estilização responsiva com CSS Grid e Flexbox.',
+    },
+    {
+      id: 4,
+      ordem: 4,
+      titulo: 'Módulo 4 — JavaScript',
+      tecnologia: 'JavaScript',
+      descricao: 'Interatividade no navegador, manipulação da árvore DOM, Promises e consumo de APIs assíncronas com fetch.',
+    },
+  ];
 }
 
 /**

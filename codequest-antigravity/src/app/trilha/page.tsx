@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Compass, Blocks, Code, FileCode, Layers, ArrowRight } from 'lucide-react';
+import { Compass, Blocks, Code, FileCode, Layers, ArrowRight, Target } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 
@@ -10,7 +10,9 @@ const MODULOS_TRILHA = [
     ordem: 1,
     titulo: 'Módulo 1 — Programação em Blocos',
     tecnologia: 'Blocos / Lógica',
-    descricao: 'Fundamentos de lógica algorítmica, variáveis, condicionais e laços visuais.',
+    descricao: 'Fundamentos de lógica algorítmica, variáveis, estruturas condicionais e laços visuais de repetição.',
+    missao_titulo: 'O Despertar dos Blocos Mágicos',
+    dificuldade: 'facil' as const,
     icone: Blocks,
   },
   {
@@ -18,7 +20,9 @@ const MODULOS_TRILHA = [
     ordem: 2,
     titulo: 'Módulo 2 — Python',
     tecnologia: 'Python',
-    descricao: 'Sintaxe limpa, estruturas de dados, funções e scripts orientados a objetos.',
+    descricao: 'Sintaxe limpa, estruturas de dados, funções puras, tipagem estática e algoritmos orientados a objetos.',
+    missao_titulo: 'O Cálculo do Dano Crítico',
+    dificuldade: 'facil' as const,
     icone: Code,
   },
   {
@@ -26,7 +30,9 @@ const MODULOS_TRILHA = [
     ordem: 3,
     titulo: 'Módulo 3 — HTML e CSS',
     tecnologia: 'HTML/CSS',
-    descricao: 'Estruturação semântica, acessibilidade e estilização responsiva para a web.',
+    descricao: 'Estruturação semântica com HTML5, acessibilidade web (WCAG) e estilização responsiva com CSS Grid e Flexbox.',
+    missao_titulo: 'O Estandarte Responsivo da Guilda',
+    dificuldade: 'medio' as const,
     icone: FileCode,
   },
   {
@@ -34,7 +40,9 @@ const MODULOS_TRILHA = [
     ordem: 4,
     titulo: 'Módulo 4 — JavaScript',
     tecnologia: 'JavaScript',
-    descricao: 'Interatividade no navegador, manipulação de DOM e consumo de APIs assíncronas.',
+    descricao: 'Interatividade no navegador, manipulação da árvore DOM, Promises e consumo de APIs assíncronas com fetch.',
+    missao_titulo: 'O Feitiço da API Assíncrona',
+    dificuldade: 'dificil' as const,
     icone: Layers,
   },
 ];
@@ -48,7 +56,7 @@ export default function TrilhaPage() {
           <span>Trilha Pedagógica</span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold text-white">Trilha de Aprendizagem</h1>
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-slate-400 mt-1">
           Percorra os 4 módulos estruturados para consolidar seus conhecimentos e desbloquear novas missões.
         </p>
       </div>
@@ -56,9 +64,16 @@ export default function TrilhaPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {MODULOS_TRILHA.map((m) => {
           const Icon = m.icone;
+          const badgeDificuldade =
+            m.dificuldade === 'facil'
+              ? { variant: 'success' as const, label: 'Fácil' }
+              : m.dificuldade === 'medio'
+              ? { variant: 'warning' as const, label: 'Médio' }
+              : { variant: 'danger' as const, label: 'Difícil' };
+
           return (
             <Link key={m.id} href={`/trilha/${m.id}`} className="group">
-              <Card className="h-full hover:border-indigo-500/50 transition-colors">
+              <Card className="h-full hover:border-indigo-500/50 transition-colors flex flex-col justify-between">
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
                     <div className="p-2.5 rounded-lg bg-indigo-950/60 text-indigo-400 border border-indigo-900/50">
@@ -69,11 +84,23 @@ export default function TrilhaPage() {
                   <CardTitle className="group-hover:text-indigo-400 transition-colors">
                     {m.titulo}
                   </CardTitle>
-                  <CardDescription>{m.descricao}</CardDescription>
+                  <CardDescription className="leading-relaxed">{m.descricao}</CardDescription>
                 </CardHeader>
-                <CardContent className="pt-2 flex items-center justify-end text-sm text-indigo-400 font-medium">
-                  <span>Acessar Módulo</span>
-                  <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                <CardContent className="pt-0 flex flex-col gap-3">
+                  <div className="p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-xs flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 text-slate-300 min-w-0">
+                      <Target className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
+                      <span className="font-medium truncate">{m.missao_titulo}</span>
+                    </div>
+                    <Badge variant={badgeDificuldade.variant} className="flex-shrink-0">
+                      {badgeDificuldade.label}
+                    </Badge>
+                  </div>
+
+                  <div className="flex items-center justify-end text-sm text-indigo-400 font-medium pt-1">
+                    <span>Acessar Módulo</span>
+                    <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </CardContent>
               </Card>
             </Link>

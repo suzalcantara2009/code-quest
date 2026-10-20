@@ -184,6 +184,13 @@ export default function MissoesPage() {
                         <p className="line-clamp-2">{m.criterio_aceite}</p>
                       </div>
 
+                      {m.explicacao && (
+                        <div className="flex items-center gap-1.5 text-xs text-indigo-300">
+                          <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
+                          <span>Base teórica & conceitos pedagógicos inclusos</span>
+                        </div>
+                      )}
+
                       {m.codigo_inicial && (
                         <div className="flex items-center gap-1.5 text-xs text-slate-500">
                           <Code2 className="w-3.5 h-3.5 text-slate-400" />

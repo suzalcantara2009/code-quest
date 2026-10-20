@@ -56,6 +56,7 @@ export async function POST(request: Request) {
     const resultado = await cadastrarMissaoAdmin({
       modulo_id: parsed.data.modulo_id,
       titulo: parsed.data.titulo,
+      explicacao: parsed.data.explicacao,
       enunciado: parsed.data.enunciado,
       dificuldade: parsed.data.dificuldade,
       criterio_aceite: parsed.data.criterio_aceite,

@@ -57,7 +57,7 @@ export default function TrilhaPage() {
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold text-white">Trilha de Aprendizagem</h1>
         <p className="text-sm text-slate-400 mt-1">
-          Percorra os 4 módulos estruturados para consolidar seus conhecimentos e desbloquear novas missões.
+          Percorra os 4 módulos estruturados com aulas completas de sintaxe de cada linguagem, fundamentos teóricos e 24 desafios interativos de código.
         </p>
       </div>
 
@@ -87,10 +87,19 @@ export default function TrilhaPage() {
                   <CardDescription className="leading-relaxed">{m.descricao}</CardDescription>
                 </CardHeader>
                 <CardContent className="pt-0 flex flex-col gap-3">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <span className="text-xs text-indigo-400 bg-indigo-950/60 border border-indigo-900/60 px-2 py-0.5 rounded font-mono">
+                      6 Desafios Oficiais
+                    </span>
+                    <span className="text-[11px] text-indigo-300 bg-indigo-950/40 px-2 py-0.5 rounded border border-indigo-800/40 font-medium">
+                      📖 Aulas de Sintaxe Inclusas
+                    </span>
+                  </div>
+
                   <div className="p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-xs flex items-center justify-between gap-2">
                     <div className="flex items-center gap-1.5 text-slate-300 min-w-0">
                       <Target className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
-                      <span className="font-medium truncate">{m.missao_titulo}</span>
+                      <span className="font-medium truncate">Desafio 1: {m.missao_titulo}</span>
                     </div>
                     <Badge variant={badgeDificuldade.variant} className="flex-shrink-0">
                       {badgeDificuldade.label}

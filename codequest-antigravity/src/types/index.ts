@@ -81,7 +81,7 @@ export interface Missao {
   id: number;
   modulo_id: number;
   titulo: string;
-  teoria?: string | null;
+  explicacao?: string | null;
   enunciado: string;
   codigo_inicial?: string | null;
   criterio_aceite: string;

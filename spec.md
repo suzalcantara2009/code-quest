@@ -118,113 +118,748 @@ O sistema possui 5 perfis de usuários com níveis hierárquicos e permissões e
 * **RF15a** — Validação automática de submissões via Webhook do GitHub com verificação obrigatória de assinatura criptográfica HMAC SHA-256 no header `X-Hub-Signature-256`, rejeitando payloads adulterados ou sem assinatura válida. *(V2)*
 * **RF15b** — Consulta ao histórico individual de missões completadas pelo desenvolvedor na visualização detalhada da ficha e na tela da missão. *(V2)*
 
-#### Catálogo Oficial das 4 Missões Iniciais da Trilha
+#### Catálogo Oficial das 24 Missões da Trilha Pedagógica (6 Desafios por Módulo com Base Conceitual)
 
-1. **Missão 1 (Módulo 1 — Programação em Blocos)**:
-   - **ID**: `1` | **Módulo**: `1` (Programação em Blocos)
-   - **Título**: *O Despertar dos Blocos Mágicos*
-   - **Dificuldade**: `facil` (Fácil)
-   - **Enunciado**: *Nas ruínas ancestrais de Algoritmia, o herói precisa atravessar um corredor repleto de armadilhas para alcançar o Baú de Runas Sagradas. Monte uma sequência algorítmica visual utilizando estruturas de repetição e verificações condicionais: enquanto o caminho à frente estiver livre, o personagem deve avançar uma casa; caso encontre um obstáculo mágico, deve desarmá-lo antes de prosseguir; ao atingir a câmara final, deve abrir o baú para coletar o fragmento de código.*
-   - **Código Inicial (Template)**:
-     ```text
-     // Algoritmo Visual de Blocos
-     enquanto (caminhoLivre()) {
-       andarFrente();
-       se (detectarArmadilha()) {
-         desarmarArmadilha();
-       }
-     }
-     se (alcancouBau()) {
-       abrirBau();
-     }
-     ```
-   - **Critério de Aceite**: *O algoritmo deve guiar o herói pelo labirinto alcançando o baú em no máximo 10 iterações, sem colidir com obstáculos e desarmando todas as armadilhas encontradas.*
+### Módulo 1 — Programação em Blocos
 
-2. **Missão 2 (Módulo 2 — Python)**:
-   - **ID**: `2` | **Módulo**: `2` (Python)
-   - **Título**: *O Cálculo do Dano Crítico*
-   - **Dificuldade**: `facil` (Fácil)
-   - **Enunciado**: *Na taverna dos magos de batalha, os aventureiros necessitam de um cálculo preciso do dano de suas magias elementais contra chefes de masmorra. Escreva em Python a função `calcular_dano(ataque_base: int, multiplicador: float, bonus: int) -> int` que recebe os pontos de ataque base, um multiplicador de acerto crítico e um bônus numérico. Se o multiplicador for estritamente superior a 1.5, o valor de bônus deve ser somado antes de aplicar o arredondamento final. O dano resultante nunca pode ser negativo e deve retornar como um número inteiro.*
-   - **Código Inicial (Template)**:
-     ```python
-     def calcular_dano(ataque_base: int, multiplicador: float, bonus: int) -> int:
-         """Calcula o dano final desferido pelo herói contra criaturas sombrias.
-         
-         Args:
-             ataque_base: Força inicial do golpe (inteiro >= 0).
-             multiplicador: Fator crítico (float >= 1.0).
-             bonus: Valor adicional concedido por runas e equipamentos.
-         
-         Returns:
-             Dano total resultante em número inteiro não-negativo.
-         """
-         # TODO: Implemente a lógica do cálculo de dano aqui
-         pass
-     ```
-   - **Critério de Aceite**: *A função deve retornar um número inteiro (int), arredondar valores fracionários corretamente, aplicar o bônus apenas quando o multiplicador for maior que 1.5 e garantir resultado >= 0 em todos os casos de teste.*
+##### Missão 1: O Despertar dos Blocos Mágicos
+- **ID**: `1` | **Módulo**: `1` (Módulo 1 — Programação em Blocos)
+- **Dificuldade**: `facil` (Fácil)
+- **Grimório Teórico & Explicação Conceitual**:
+  > Antes de conjurar algoritmos complexos, todo aprendiz deve compreender que a programação é uma sequência ordenada e finita de instruções que transformam entradas em saídas previsíveis. No paradigma visual de blocos, o fluxo de execução é controlado por duas estruturas vitais:
+  > 1. Estruturas de Repetição (enquanto / while): Avaliam continuamente uma condição lógica. Enquanto a condição for verdadeira (caminhoLivre() == true), o bloco interno é executado repetidamente.
+  > 2. Estruturas de Decisão (se / if): Permitem que o herói reaja a imprevistos no ambiente, executando ações especiais (como desarmar uma armadilha) apenas quando uma contingência é detectada.
+  > Compreender o encadeamento correto de repetição e decisão é a fundação para evitar loops infinitos e travamentos em qualquer linguagem moderna.
+- **Enunciado do Desafio**:
+  Nas ruínas ancestrais de Algoritmia, o herói precisa atravessar um corredor repleto de armadilhas para alcançar o Baú de Runas Sagradas. Monte uma sequência algorítmica visual utilizando estruturas de repetição e verificações condicionais: enquanto o caminho à frente estiver livre, o personagem deve avançar uma casa; caso encontre um obstáculo mágico, deve desarmá-lo antes de prosseguir; ao atingir a câmara final, deve abrir o baú para coletar o fragmento de código.
+- **Código Inicial (Template)**:
+  ```text
+  // Algoritmo Visual de Blocos
+  enquanto (caminhoLivre()) {
+    andarFrente();
+    se (detectarArmadilha()) {
+      desarmarArmadilha();
+    }
+  }
+  se (alcancouBau()) {
+    abrirBau();
+  }
+  ```
+- **Critério de Aceite**:
+  *O algoritmo deve guiar o herói pelo labirinto alcançando o baú em no máximo 10 iterações, sem colidir com obstáculos e desarmando todas as armadilhas encontradas.*
 
-3. **Missão 3 (Módulo 3 — HTML e CSS)**:
-   - **ID**: `3` | **Módulo**: `3` (HTML e CSS)
-   - **Título**: *O Estandarte Responsivo da Guilda*
-   - **Dificuldade**: `medio` (Médio)
-   - **Enunciado**: *Os arautos da guilda precisam anunciar seus guerreiros no mural público do reino com alta legibilidade em qualquer dispositivo. Construa a estrutura semântica em HTML5 de um cartão de herói com a tag `<section class="guilda-card">`, contendo cabeçalho com o nome e classe, uma área de avatar/brasão e a lista de atributos de poder (0–100). Em seguida, aplique regras CSS (Flexbox ou CSS Grid) para que em telas menores que 640px os elementos se reorganizem verticalmente em coluna única e com contraste mínimo de cores atendendo ao padrão WCAG AA.*
-   - **Código Inicial (Template)**:
-     ```html
-     <!-- Estandarte do Herói da Guilda -->
-     <section class="guilda-card">
-       <header class="guilda-header">
-         <h2 class="heroi-nome">Aragorn</h2>
-         <span class="heroi-classe">Guardião do Norte</span>
-       </header>
-       
-       <div class="guilda-brasao">
-         <img src="/brasao-tolkien.svg" alt="Brasão da Casa Telcontar" />
-       </div>
+##### Missão 2: A Coleta das Gemas Elementais
+- **ID**: `2` | **Módulo**: `1` (Módulo 1 — Programação em Blocos)
+- **Dificuldade**: `facil` (Fácil)
+- **Grimório Teórico & Explicação Conceitual**:
+  > Muitas vezes conhecemos de antemão o número exato de repetições necessárias. Para isso, utilizamos Laços Contados (laço para / for), acompanhados de uma Variável Acumuladora:
+  > 1. Contador de Passos (para pilar de 1 até N): Uma variável de controle que incrementa a cada ciclo até atingir o limite estipulado.
+  > 2. Variável Acumuladora (totalGemas = totalGemas + 1): Armazena e preserva o estado ao longo das iterações da jornada.
+  > Dominar laços contados evita erros clássicos de "deslocamento por um" (off-by-one errors) e garante que o processamento termine exatamente após o último elemento planejado.
+- **Enunciado do Desafio**:
+  Uma ponte suspensa de 5 pilares arcanos estende-se sobre o abismo do esquecimento. Em cada pilar repousa uma gema elemental brilhante. Construa um algoritmo em blocos com um laço contado de 1 a 5: para cada pilar, o herói deve avançar, conjurar o feitiço de coleta e incrementar a variável acumuladora gemasColetadas. Ao final da ponte, retorne o total acumulado.
+- **Código Inicial (Template)**:
+  ```text
+  // Coleta das Gemas com Laço Contado
+  let gemasColetadas = 0;
+  
+  para (let pilar = 1; pilar <= 5; pilar++) {
+    andarFrente();
+    coletarGema();
+    gemasColetadas = gemasColetadas + 1;
+  }
+  
+  notificarGuilda("Total de gemas coletadas:", gemasColetadas);
+  ```
+- **Critério de Aceite**:
+  *O herói deve percorrer exatamente os 5 pilares da ponte e acumular 5 gemas no inventário ao final da travessia sem passos redundantes.*
 
-       <dl class="guilda-atributos">
-         <dt>Poder de Combate:</dt>
-         <dd class="poder-valor">88/100</dd>
-         <dt>Universo:</dt>
-         <dd>Tolkien</dd>
-       </dl>
-     </section>
+##### Missão 3: O Labirinto das Bifurcações Rúnicas
+- **ID**: `3` | **Módulo**: `1` (Módulo 1 — Programação em Blocos)
+- **Dificuldade**: `medio` (Médio)
+- **Grimório Teórico & Explicação Conceitual**:
+  > Quando o herói se depara com decisões com mais de dois desfechos possíveis, o simples se/senão torna-se insuficiente. Entram em cena as Estruturas Condicionais Encadeadas (se / senão-se / senão) e os Operadores Lógicos (E, OU, NÃO):
+  > - se (if): Avalia o primeiro caso prioritário.
+  > - senão-se (else if): Avalia casos secundários caso o primeiro seja falso.
+  > - senão (else): O caminho padrão executado se nenhuma das alternativas anteriores for satisfeita.
+  > Em sistemas reais, isso é análogo ao tratamento de múltiplos estados de conexão HTTP ou permissões de usuário (estudante, professor, moderador, admin).
+- **Enunciado do Desafio**:
+  O herói chega à Câmara dos Três Portais Rúnicos. Cada bifurcação emite uma aura mágica diferente que exige um feitiço específico: se a luz emitida for azul (gelo), deve conjurar Chama Arcana; senão se a luz for vermelha (fogo), deve conjurar Orbe de Gelo; caso contrário (luz neutra), deve conjurar Escudo de Vento e passar em silêncio. Escreva a lógica para desarmar 4 bifurcações consecutivas.
+- **Código Inicial (Template)**:
+  ```text
+  // Estrutura Condicional Encadeada
+  funcao resolverBifurcacao(corLuz) {
+    se (corLuz === "azul") {
+      conjurarChamaArcana();
+    } senao se (corLuz === "vermelha") {
+      conjurarOrbeGelo();
+    } senao {
+      conjurarEscudoVento();
+    }
+    avancarProximaCamara();
+  }
+  ```
+- **Critério de Aceite**:
+  *O algoritmo deve identificar corretamente as cores emitidas pelas 4 bifurcações, conjurando a magia exata para cada uma sem sofrer penalidade de vida.*
 
-     <style>
-       .guilda-card {
-         /* TODO: Defina layout com display: flex ou grid */
-         padding: 1.5rem;
-       }
-       @media (max-width: 640px) {
-         /* TODO: Responsividade para dispositivos móveis */
-       }
-     </style>
-     ```
-   - **Critério de Aceite**: *Uso exclusivo de tags HTML5 semânticas (<section>, <header>, <dl>), layout responsivo adaptável com media query em 640px e taxa de contraste de cores acessível (mínimo 4.5:1 para texto normal).*
+##### Missão 4: O Desarme dos Autômatos de Guarda
+- **ID**: `4` | **Módulo**: `1` (Módulo 1 — Programação em Blocos)
+- **Dificuldade**: `medio` (Médio)
+- **Grimório Teórico & Explicação Conceitual**:
+  > A repetição desnecessária de código é um dos maiores problemas na engenharia de software (princípio DRY: Don't Repeat Yourself). Para combater isso na programação visual, agrupamos rotinas em Procedimentos e Funções Modulares:
+  > 1. Declaração do Procedimento: Define um bloco reutilizável com um nome descritivo e parâmetros de entrada.
+  > 2. Parâmetros: Valores passados para o procedimento que personalizam seu comportamento interno.
+  > 3. Invocação (Chamada): O herói reutiliza a mesma lógica para desarmar múltiplos autômatos sem duplicar blocos na tela.
+- **Enunciado do Desafio**:
+  Dois autômatos colossais guardam os portões da cidadela: um feito de ferro e outro de cristal. Cada um exige uma sequência de giros rúnicos de acordo com seu material. Crie um procedimento modular desarmarAutomato(tipo) que recebe o material como parâmetro e realiza a sequência adequada, invocando-o para ambos os guardas.
+- **Código Inicial (Template)**:
+  ```text
+  // Procedimento Modular Reutilizável
+  funcao desarmarAutomato(tipo) {
+    se (tipo === "ferro") {
+      girarChave("esquerda", 2);
+      pressionarRuna("bronze");
+    } senao {
+      girarChave("direita", 3);
+      pressionarRuna("ametista");
+    }
+  }
+  
+  // Desarmando os dois guardas do salão:
+  desarmarAutomato("ferro");
+  avancar();
+  desarmarAutomato("cristal");
+  ```
+- **Critério de Aceite**:
+  *A lógica de desarme deve estar encapsulada em um único procedimento reutilizável com parâmetros, sendo executada com sucesso contra os dois autômatos.*
 
-4. **Missão 4 (Módulo 4 — JavaScript)**:
-   - **ID**: `4` | **Módulo**: `4` (JavaScript)
-   - **Título**: *O Feitiço da API Assíncrona*
-   - **Dificuldade**: `dificil` (Difícil)
-   - **Enunciado**: *Para invocar os feitiços mais poderosos do reino, o grimório digital precisa consultar os tomos sagrados armazenados em uma API remota. Implemente a função assíncrona `buscarPoderesGuilda(url: string)` em JavaScript moderno (ES6+). A função deve realizar a requisição HTTP usando `fetch()`, validar se a resposta retornou status 200 (lançando exceção amigável caso ocorra erro 4xx ou 5xx com `!res.ok`), converter os dados para JSON, extrair o array de magias e retorná-lo ordenado de forma decrescente pelo nível de poder arcano de cada item.*
-   - **Código Inicial (Template)**:
-     ```javascript
-     /**
-      * Consulta o grimório sagrado consumindo a API REST assíncrona.
-      * @param {string} url - Endereço do endpoint do grimório da guilda.
-      * @returns {Promise<Array<{ nome: string, poder: number }>>} Lista ordenada de poderes.
-      */
-     async function buscarPoderesGuilda(url) {
-       try {
-         // TODO: Realize o fetch com verificação de status HTTP (200 OK)
-         // TODO: Trate respostas 4xx e 5xx lançando erro com mensagem descritiva
-         // TODO: Retorne o array de poderes ordenado pelo poder (decrescente)
-       } catch (erro) {
-         console.error("Falha ao conjurar feitiço de consulta:", erro.message);
-         throw erro;
-       }
-     }
-     ```
-   - **Critério de Aceite**: *A função deve usar async/await com try/catch, verificar res.ok rejeitando respostas HTTP de erro, tratar exceções de rede e retornar a Promise resolvida com os poderes ordenados por nível de poder (decrescente).*
+##### Missão 5: A Travessia das Pontes Móveis
+- **ID**: `5` | **Módulo**: `1` (Módulo 1 — Programação em Blocos)
+- **Dificuldade**: `medio` (Médio)
+- **Grimório Teórico & Explicação Conceitual**:
+  > No desenvolvimento de sistemas reativos, frequentemente lidamos com Estados Transitórios e Sincronização Temporal. Uma ação não pode ocorrer antes que o ambiente externo atinja um estado seguro:
+  > 1. Condições Compostas (E / &&): Exigem que múltiplos predicados sejam verdadeiros simultaneamente (ponteAbaixada() E tempoRestante >= 3).
+  > 2. Espera Ativa Controlada (aguardar()): Pausa temporária enquanto a condição de travessia não estiver madura.
+  > Essa lógica modela requisições que aguardam disponibilidade de recursos ou controle de fluxo em sistemas distribuídos.
+- **Enunciado do Desafio**:
+  O herói precisa atravessar 3 pontes levadiças mágicas que abrem e fecham em intervalos cronometrados. O algoritmo deve verificar se a ponte está abaixada e se há pelo menos 3 segundos de tempo seguro antes de iniciar o passo. Se o tempo for insuficiente, o herói deve aguardar o próximo ciclo.
+- **Código Inicial (Template)**:
+  ```text
+  // Sincronização com Pontes Móveis
+  para (let p = 1; p <= 3; p++) {
+    enquanto (!ponteAbaixada() || obterTempoRestante() < 3) {
+      aguardar(1);
+    }
+    atravessarPonte();
+  }
+  ```
+- **Critério de Aceite**:
+  *O herói deve cruzar as 3 pontes levadiças sem cair no abismo, garantindo travessia estritamente quando ponteAbaixada() for true e tempoRestante >= 3.*
+
+##### Missão 6: O Guardião do Labirinto de Espelhos
+- **ID**: `6` | **Módulo**: `1` (Módulo 1 — Programação em Blocos)
+- **Dificuldade**: `dificil` (Difícil)
+- **Grimório Teórico & Explicação Conceitual**:
+  > Algoritmos clássicos de navegação autônoma em labirintos utilizam a Regra da Mão Direita (Wall Follower). Em qualquer labirinto 2D simplesmente conexo, manter a mão direita encostada na parede garante que o viajante encontrará a saída sem entrar em ciclos eternos.
+  > Prioridade de decisão da máquina de estados a cada célula:
+  > 1. Se houver caminho livre à direita: virar à direita e avançar.
+  > 2. Senão, se o caminho à frente estiver livre: avançar.
+  > 3. Senão, se houver caminho à esquerda: virar à esquerda e avançar.
+  > 4. Caso esteja em um beco sem saída: dar meia-volta (180°).
+  > Esse algoritmo introduz os fundamentos de inteligência artificial simbólica e robótica móvel.
+- **Enunciado do Desafio**:
+  O mago supremo desafia você a escapar do temido Labirinto de Espelhos de Algoritmia. Escreva um algoritmo autônomo baseado na Regra da Mão Direita que permita ao autômato navegar por corredores complexos e becos sem saída até encontrar o portal de teletransporte.
+- **Código Inicial (Template)**:
+  ```text
+  // Algoritmo Autônomo da Regra da Mão Direita
+  enquanto (!chegouAoPortal()) {
+    se (ladoDireitoLivre()) {
+      virarDireita();
+      andarFrente();
+    } senao se (frenteLivre()) {
+      andarFrente();
+    } senao se (ladoEsquerdoLivre()) {
+      virarEsquerda();
+      andarFrente();
+    } senao {
+      virarMeiaVolta();
+    }
+  }
+  ```
+- **Critério de Aceite**:
+  *O autômato deve encontrar a saída do labirinto em no máximo 40 passos sem colidir e sem ficar preso em becos sem saída.*
+
+### Módulo 2 — Python
+
+##### Missão 7: O Cálculo do Dano Crítico
+- **ID**: `7` | **Módulo**: `2` (Módulo 2 — Python)
+- **Dificuldade**: `facil` (Fácil)
+- **Grimório Teórico & Explicação Conceitual**:
+  > Python é uma linguagem de altíssima legibilidade e tipagem dinâmica forte. A partir da PEP 484, o ecossistema adotou amplamente Type Hints (anotações de tipo) que tornam o código autodocumentado e seguro.
+  > Pontos fundamentais desta missão:
+  > 1. Assinatura de Função: Definida com def nome_funcao(arg: tipo) -> tipo_retorno:.
+  > 2. Docstrings (PEP 257): Documentação em bloco com aspas triplas descrevendo argumentos e retorno.
+  > 3. Cálculos Aritméticos e Arredondamento: Operações de multiplicação (*), soma (+) e arredondamento com round() ou int().
+  > 4. Condicionais e Função max(): Assegurar que o valor retornado respeite limites mínimos (por exemplo, nunca ser negativo com max(0, valor)).
+- **Enunciado do Desafio**:
+  Na taverna dos magos de batalha, os aventureiros necessitam de um cálculo preciso do dano de suas magias elementais contra chefes de masmorra. Escreva em Python a função calcular_dano(ataque_base: int, multiplicador: float, bonus: int) -> int que recebe os pontos de ataque base, um multiplicador de acerto crítico e um bônus numérico. Se o multiplicador for estritamente superior a 1.5, o valor de bônus deve ser somado antes de aplicar o arredondamento final. O dano resultante nunca pode ser negativo e deve retornar como um número inteiro.
+- **Código Inicial (Template)**:
+  ```python
+  def calcular_dano(ataque_base: int, multiplicador: float, bonus: int) -> int:
+      """Calcula o dano final desferido pelo herói contra criaturas sombrias.
+      
+      Args:
+          ataque_base: Força inicial do golpe (inteiro >= 0).
+          multiplicador: Fator crítico (float >= 1.0).
+          bonus: Valor adicional concedido por runas e equipamentos.
+      
+      Returns:
+          Dano total resultante em número inteiro não-negativo.
+      """
+      # TODO: Implemente a lógica do cálculo de dano aqui
+      pass
+  ```
+- **Critério de Aceite**:
+  *A função deve retornar um número inteiro (int), arredondar valores fracionários corretamente, aplicar o bônus apenas quando o multiplicador for maior que 1.5 e garantir resultado >= 0 em todos os casos de teste.*
+
+##### Missão 8: O Filtro de Poções do Boticário
+- **ID**: `8` | **Módulo**: `2` (Módulo 2 — Python)
+- **Dificuldade**: `facil` (Fácil)
+- **Grimório Teórico & Explicação Conceitual**:
+  > A manipulação de coleções de dados é o coração de qualquer aplicação backend. Em Python, a técnica mais idiomática e eficiente para filtrar e transformar listas é a List Comprehension (compreensão de listas):
+  > resultado = [expressao for item in colecao if condicao]
+  > Neste desafio, trabalhamos com uma lista de dicionários (list[dict]). Para ordenar strings alfabeticamente, usamos a função embutida sorted(lista) ou o método lista.sort(). Escrever código pythônico significa priorizar compreensões de listas em vez de loops for manuais com múltiplos .append().
+- **Enunciado do Desafio**:
+  O boticário de Valfenda precisa catalogar seu estoque de poções para a guilda. Crie a função filtrar_pocoes_disponiveis(inventario: list[dict], nivel_minimo: int) -> list[str] que recebe uma lista de poções (onde cada poção possui "nome": str, "nivel": int e "em_estoque": bool) e retorna uma lista ordenada alfabeticamente contendo apenas os nomes das poções que estão em estoque (em_estoque == True) e cujo nível seja maior ou igual a nivel_minimo.
+- **Código Inicial (Template)**:
+  ```python
+  def filtrar_pocoes_disponiveis(inventario: list[dict], nivel_minimo: int) -> list[str]:
+      """Filtra poções disponíveis em estoque que atendem ao nível mínimo exigido.
+      
+      Args:
+          inventario: Lista de dicionários com chaves 'nome', 'nivel', 'em_estoque'.
+          nivel_minimo: Nível mínimo de maestria exigido (inteiro).
+      
+      Returns:
+          Lista alfabética contendo os nomes das poções selecionadas.
+      """
+      # TODO: Use list comprehension para filtrar e ordene alfabeticamente com sorted()
+      pass
+  ```
+- **Critério de Aceite**:
+  *Retornar lista ordenada alfabeticamente com os nomes das poções onde em_estoque é True e nivel >= nivel_minimo; retornar lista vazia caso nenhuma poção atenda aos critérios.*
+
+##### Missão 9: O Grimório de Fichas e Dicionários
+- **ID**: `9` | **Módulo**: `2` (Módulo 2 — Python)
+- **Dificuldade**: `medio` (Médio)
+- **Grimório Teórico & Explicação Conceitual**:
+  > Dicionários em Python (dict) são estruturas de associação chave-valor implementadas como tabelas hash de altíssimo desempenho O(1).
+  > Nesta missão, exploramos:
+  > 1. Acesso Seguro com .get(): Evita exceções KeyError fornecendo um valor padrão se a chave não existir.
+  > 2. Agregações com sum() e len(): Métodos matemáticos nativos para calcular médias aritméticas.
+  > 3. Identificação de Extremos (max(..., key=...)): A função max() aceita um argumento de função key (como lambda x: x["poder"]) para localizar o herói com maior pontuação em uma única linha elegante.
+- **Enunciado do Desafio**:
+  O escriba da guilda precisa de um relatório executivo sobre as fichas de personagens cadastradas. Implemente resumo_guilda(fichas: list[dict]) -> dict que recebe uma lista de fichas de personagens (cada uma contendo "nome", "classe", "poder" e "ativo") e retorna um dicionário com: "total_ativos" (contagem de fichas com ativo=True), "poder_medio" (média aritmética do poder das fichas ativas com 1 casa decimal) e "campeao_nome" (nome do personagem ativo de maior poder). Se não houver fichas ativas, retorne {"total_ativos": 0, "poder_medio": 0.0, "campeao_nome": None}.
+- **Código Inicial (Template)**:
+  ```python
+  def resumo_guilda(fichas: list[dict]) -> dict:
+      """Calcula estatísticas agregadas das fichas ativas da guilda.
+      
+      Args:
+          fichas: Lista de personagens contendo 'nome', 'classe', 'poder', 'ativo'.
+      
+      Returns:
+          Dicionário com 'total_ativos', 'poder_medio' e 'campeao_nome'.
+      """
+      # TODO: Filtre personagens ativos e calcule as agregações necessárias
+      pass
+  ```
+- **Critério de Aceite**:
+  *O dicionário retornado deve conter as 3 chaves exatas; calcular o poder médio com 1 casa decimal de precisão e retornar valores neutros padrão caso a lista esteja vazia ou sem fichas ativas.*
+
+##### Missão 10: A Criptografia das Runas Antigas
+- **ID**: `10` | **Módulo**: `2` (Módulo 2 — Python)
+- **Dificuldade**: `medio` (Médio)
+- **Grimório Teórico & Explicação Conceitual**:
+  > A criptografia clássica por substituição (como a famosa Cifra de César) é um excelente exercício para compreender a representação binária e numérica de textos.
+  > Conceitos chave em Python:
+  > 1. Função ord(c): Retorna o código numérico ASCII/Unicode de um caractere (ex: ord("A") == 65).
+  > 2. Função chr(n): Converte o código numérico de volta para o caractere original (ex: chr(65) == "A").
+  > 3. Aritmética Modular (% 26): Garante que o deslocamento do alfabeto seja circular — passar de "Z" retorna para "A".
+  > 4. Imutabilidade de Strings: Em Python, textos são imutáveis; strings cifradas são construídas acumulando caracteres ou utilizando "".join(...).
+- **Enunciado do Desafio**:
+  Para proteger mensagens contra espiões de Mordor, a guilda utiliza a Cifra de César. Crie a função cifrar_mensagem_runica(texto: str, deslocamento: int) -> str que aplica o deslocamento numérico a todas as letras (maiúsculas e minúsculas), preservando pontuações, números e espaços inalterados. Lembre-se de manter a caixa original de cada letra.
+- **Código Inicial (Template)**:
+  ```python
+  def cifrar_mensagem_runica(texto: str, deslocamento: int) -> str:
+      """Aplica a Cifra de César rúnica ao texto preservando espaços e pontuações.
+      
+      Args:
+          texto: Mensagem original a ser codificada.
+          deslocamento: Chave de translação do alfabeto (inteiro).
+      
+      Returns:
+          Texto cifrado com caixa de caracteres preservada.
+      """
+      # TODO: Itere sobre os caracteres, aplique a rotação modular e retorne o texto
+      pass
+  ```
+- **Critério de Aceite**:
+  *Manter maiúsculas e minúsculas no lugar correto, não alterar espaços nem pontuações, e calcular o ciclo modular corretamente para deslocamentos positivos ou maiores que 26.*
+
+##### Missão 11: O Validador de Nomes de Aventureiro
+- **ID**: `11` | **Módulo**: `2` (Módulo 2 — Python)
+- **Dificuldade**: `medio` (Médio)
+- **Grimório Teórico & Explicação Conceitual**:
+  > Validação de dados é uma exigência crítica de integridade e segurança de sistemas (RN08 e RNF02). Em Python, utilizamos o módulo embutido re (Expressões Regulares) e Exceções Customizadas:
+  > 1. Expressão Regular (re.match): Permite testar padrões estruturados em uma linha (ex: ^[A-Z][a-zA-Z0-9_]{1,49}$).
+  > 2. Lançamento de Erros com raise: Interrompe o fluxo anômalo disparando uma exceção clara (ValueError) para o chamador.
+  > 3. Tratamento Defensivo: Previne inserções corrompidas ou ataques de injeção em camadas posteriores do banco.
+- **Enunciado do Desafio**:
+  Implemente a função validar_nome_heroi(nome: str) -> bool para validar nomes de aventureiros segundo as regras da guilda: o nome deve ter entre 2 e 50 caracteres; deve iniciar obrigatoriamente com letra maiúscula (A-Z); pode conter apenas letras, números e underscores (_); e não pode conter espaços. Se o nome for válido, retorne True. Se for inválido, levante uma exceção ValueError contendo uma mensagem descritiva do motivo da recusa.
+- **Código Inicial (Template)**:
+  ```python
+  import re
+  
+  def validar_nome_heroi(nome: str) -> bool:
+      """Valida o identificador do aventureiro conforme as regras da guilda.
+      
+      Raises:
+          ValueError: Se o nome infringir as regras de formato ou tamanho.
+      """
+      # TODO: Valide tamanho, início com maiúscula e caracteres permitidos
+      pass
+  ```
+- **Critério de Aceite**:
+  *Retornar True para identificadores como "Goku_99" ou "Aragorn"; lançar ValueError descritivo para nomes curtos (< 2), iniciados em minúsculas ou com símbolos inválidos.*
+
+##### Missão 12: A Batalha de Turnos Orientada a Objetos
+- **ID**: `12` | **Módulo**: `2` (Módulo 2 — Python)
+- **Dificuldade**: `dificil` (Difícil)
+- **Grimório Teórico & Explicação Conceitual**:
+  > A Programação Orientada a Objetos (POO) é o paradigma fundamental de grandes arquiteturas de software. Em Python, classes encapsulam atributos (dados) e métodos (comportamentos).
+  > Pilares aplicados nesta missão:
+  > 1. Encapsulamento: Atributos inicializados no construtor __init__.
+  > 2. Herança: Uma subclasse Mago(Personagem) herda todos os métodos da classe mãe.
+  > 3. Sobrescrita de Métodos (Polimorfismo): Subclasses adaptam comportamentos (como o cálculo de ataque) mantendo a mesma interface pública.
+  > 4. Invariantes de Estado: Garantir que a vida de um guerreiro nunca atinja valores negativos, estabelecendo vida = max(0, vida - dano).
+- **Enunciado do Desafio**:
+  Construa um mini-motor de combate em POO. Crie a classe base Personagem com os atributos nome (str), vida (int) e ataque (int), e o método receber_dano(quantidade: int) que reduz a vida sem deixá-la abaixo de 0. Crie a subclasse Mago(Personagem) que adiciona o atributo mana (int) e o método lancar_magia(alvo: Personagem) -> int: se tiver ao menos 10 pontos de mana, consome 10 de mana e desfere dano igual a ataque * 2 no alvo; caso contrário, realiza ataque normal (ataque * 1) sem gastar mana.
+- **Código Inicial (Template)**:
+  ```python
+  class Personagem:
+      def __init__(self, nome: str, vida: int, ataque: int):
+          self.nome = nome
+          self.vida = max(0, vida)
+          self.ataque = ataque
+  
+      def receber_dano(self, quantidade: int):
+          # TODO: Reduza a vida sem permitir valores negativos
+          pass
+  
+  class Mago(Personagem):
+      def __init__(self, nome: str, vida: int, ataque: int, mana: int):
+          super().__init__(nome, vida, ataque)
+          self.mana = mana
+  
+      def lancar_magia(self, alvo: Personagem) -> int:
+          # TODO: Verifique a mana, aplique dano crítico ao alvo e retorne o dano causado
+          pass
+  ```
+- **Critério de Aceite**:
+  *A herança deve ser implementada com super().__init__; a vida do alvo nunca pode ser inferior a zero; e o consumo de mana e dano duplo devem ser executados apenas quando mana >= 10.*
+
+### Módulo 3 — HTML e CSS
+
+##### Missão 13: O Estandarte Semântico do Herói
+- **ID**: `13` | **Módulo**: `3` (Módulo 3 — HTML e CSS)
+- **Dificuldade**: `facil` (Fácil)
+- **Grimório Teórico & Explicação Conceitual**:
+  > O HTML5 introduziu elementos que carregam significado estrutural e contextual, superando a era das "div soups" (páginas compostas exclusivamente por dezenas de tags <div> aninhadas).
+  > Elementos semânticos indispensáveis:
+  > 1. <section> e <article>: Representam seções temáticas independentes e autossuficientes do documento.
+  > 2. <header> e <footer>: Delimitam o cabeçalho de introdução e o rodapé de autoria.
+  > 3. <figure> e <figcaption>: Agrupam ilustrações, fotos ou brasões com sua legenda contextual.
+  > 4. <dl>, <dt> e <dd>: Lista de definição ideal para exibir pares chave-valor (como "Classe: Mago" e "Poder: 92").
+  > O uso semântico é o primeiro requisito para conformidade com normas de acessibilidade digital e indexação em mecanismos de busca.
+- **Enunciado do Desafio**:
+  Construa a estrutura semântica em HTML5 de um cartão de herói da guilda. O cartão deve ser envolvido por uma tag <article class="heroi-card">, possuir um <header> com título <h2> para o nome do herói, uma tag <figure> com a imagem do brasão e legenda <figcaption>, e uma lista de definições <dl> apresentando os atributos "Universo", "Classe" e "Poder de Combate". A imagem deve conter um atributo alt acessível e descritivo.
+- **Código Inicial (Template)**:
+  ```html
+  <!-- Cartão Semântico de Personagem -->
+  <article class="heroi-card">
+    <header class="heroi-header">
+      <h2>Goku</h2>
+      <p class="heroi-subtitulo">Guerreiro Saiyajin</p>
+    </header>
+  
+    <figure class="heroi-brasao">
+      <img src="/avatar-anime.png" alt="Retrato ilustrado de Goku com aura dourada" />
+      <figcaption>Brasão Oficial da Casa Kaioken</figcaption>
+    </figure>
+  
+    <dl class="heroi-atributos">
+      <dt>Universo:</dt>
+      <dd>Anime</dd>
+      <dt>Classe:</dt>
+      <dd>Mago / Guerreiro</dd>
+      <dt>Poder:</dt>
+      <dd>92/100</dd>
+    </dl>
+  </article>
+  ```
+- **Critério de Aceite**:
+  *Utilizar exclusivamente elementos semânticos de HTML5 (<article>, <header>, <figure>, <figcaption>, <dl>), incluir atributo alt descritivo e evitar divs vazias no esqueleto principal.*
+
+##### Missão 14: O Mural das Cores Acessíveis da Taverna
+- **ID**: `14` | **Módulo**: `3` (Módulo 3 — HTML e CSS)
+- **Dificuldade**: `facil` (Fácil)
+- **Grimório Teórico & Explicação Conceitual**:
+  > Acessibilidade na web não é opcional — é um direito de todos os usuários. As diretrizes internacionais WCAG 2.1 (nível AA) exigem uma taxa mínima de contraste de cores de 4.5:1 para textos normais e 3:1 para textos grandes (acima de 18pt ou 14pt em negrito).
+  > Recursos modernos de CSS:
+  > 1. Variáveis CSS (Custom Properties): Declaradas com --nome-da-variavel no escopo :root, facilitam a manutenção de temas.
+  > 2. Estados de Foco Visível (:focus-visible): Essenciais para usuários que navegam por teclado (Tab), desenhando um contorno nítido no elemento ativo.
+  > 3. Cálculo de Luminância: Combinar fundos escuros (como #0f172a) com textos claros de alto contraste (como #f8fafc).
+- **Enunciado do Desafio**:
+  Desenvolva a folha de estilo de um painel de avisos da taverna com variáveis CSS globais no :root. Defina variáveis para --bg-card, --text-primary, --cor-destaque e --borda-foco. Garanta que a combinação de cores atenda à razão de contraste mínima de 4.5:1 (WCAG AA) e estilize o botão de ação do painel com :focus-visible exibindo um outline nítido de pelo menos 2px.
+- **Código Inicial (Template)**:
+  ```html
+  :root {
+    /* TODO: Defina variáveis com alto contraste (mínimo 4.5:1 WCAG AA) */
+    --bg-card: #0f172a;
+    --text-primary: #f8fafc;
+    --cor-destaque: #6366f1;
+    --borda-foco: #38bdf8;
+  }
+  
+  .aviso-taverna {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+  }
+  
+  .btn-taverna:focus-visible {
+    /* TODO: Estilize o contorno de foco acessível para navegação por teclado */
+    outline: 2px solid var(--borda-foco);
+    outline-offset: 2px;
+  }
+  ```
+- **Critério de Aceite**:
+  *Declarar variáveis no :root, assegurar taxa de contraste >= 4.5:1 entre texto e fundo, e definir regra :focus-visible nítida no botão.*
+
+##### Missão 15: O Estandarte Responsivo da Guilda
+- **ID**: `15` | **Módulo**: `3` (Módulo 3 — HTML e CSS)
+- **Dificuldade**: `medio` (Médio)
+- **Grimório Teórico & Explicação Conceitual**:
+  > O design responsivo garante que a interface da guilda seja impecável tanto em smartphones quanto em monitores ultrawide. O CSS Flexbox é o modelo de caixa ideal para distribuir espaço ao longo de um eixo único (linha ou coluna):
+  > 1. display: flex: Transforma o contêiner em um flex container.
+  > 2. justify-content e align-items: Controlam o alinhamento nos eixos principal e transversal.
+  > 3. Media Queries (@media (max-width: 640px)): Redefinem regras quando a largura da viewport atinge um ponto de quebra (breakpoint), alternando flex-direction: column para que os dados empilhem elegantemente em telas compactas.
+- **Enunciado do Desafio**:
+  Os arautos da guilda precisam anunciar seus guerreiros no mural público do reino com alta legibilidade em qualquer dispositivo. Construa o cartão com classe .guilda-card utilizando Flexbox para que no computador os elementos fiquem lado a lado com espaçamento proporcional (gap: 1.5rem), e em dispositivos com tela de até 640px eles se reorganizem verticalmente em coluna única com alinhamento centralizado.
+- **Código Inicial (Template)**:
+  ```html
+  /* Layout Flexbox Responsivo */
+  .guilda-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: #1e1b4b;
+    border-radius: 1rem;
+  }
+  
+  @media (max-width: 640px) {
+    .guilda-card {
+      /* TODO: Reorganize em coluna única para telas móveis */
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+  ```
+- **Critério de Aceite**:
+  *Utilizar display: flex com gap, incluir media query em 640px com flex-direction: column e garantir ausência de barra de rolagem horizontal indesejada.*
+
+##### Missão 16: O Inventário em Grade Mágica
+- **ID**: `16` | **Módulo**: `3` (Módulo 3 — HTML e CSS)
+- **Dificuldade**: `medio` (Médio)
+- **Grimório Teórico & Explicação Conceitual**:
+  > Enquanto o Flexbox é ideal para eixos unidimensionais, o CSS Grid Layout é o padrão moderno definitivo para grades bidimensionais (linhas e colunas simultâneas).
+  > A fórmula mágica da responsividade com Grid:
+  > grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  > - repeat(): Repete a definição de colunas.
+  > - auto-fill: Cria tantas colunas quantas couberem na largura atual.
+  > - minmax(120px, 1fr): Cada coluna terá no mínimo 120px e expandirá proporcionalmente (1 fração) para ocupar o espaço livre. Dessa forma, a grade se adapta a qualquer tela sem uma única media query.
+- **Enunciado do Desafio**:
+  Construa a grade de inventário da mochila de itens mágicos do aventureiro. O contêiner .mochila-grid deve utilizar CSS Grid para acomodar slots de itens de no mínimo 120px de largura com preenchimento responsivo (repeat(auto-fill, minmax(120px, 1fr))). Cada slot .item-slot deve ter aspecto quadrado, fundo escuro, borda suave e efeito de elevação no :hover com transição suave (transform: translateY(-4px)).
+- **Código Inicial (Template)**:
+  ```html
+  /* Mochila de Inventário com CSS Grid */
+  .mochila-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .item-slot {
+    aspect-ratio: 1 / 1;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  
+  .item-slot:hover {
+    /* TODO: Adicione o efeito de elevação e brilho de borda */
+    transform: translateY(-4px);
+    border-color: #818cf8;
+  }
+  ```
+- **Critério de Aceite**:
+  *Aplicar display: grid com repeat(auto-fill, minmax(120px, 1fr)), gap uniforme, proporção quadrada (aspect-ratio: 1/1) e transição fluida no :hover.*
+
+##### Missão 17: O Formulário Encantado de Alistamento
+- **ID**: `17` | **Módulo**: `3` (Módulo 3 — HTML e CSS)
+- **Dificuldade**: `medio` (Médio)
+- **Grimório Teórico & Explicação Conceitual**:
+  > Formulários acessíveis conectam o usuário ao servidor de maneira confiável e sem barreiras. Em HTML/CSS, acessibilidade em formulários repousa em 3 pilares:
+  > 1. Associação Explícita (<label for="id">): O leitor de tela anuncia o rótulo ao focar no campo, e o clique no rótulo foca o input.
+  > 2. Agrupamento Semântico (<fieldset> e <legend>): Agrupa campos logicamente relacionados (ex: dados do herói).
+  > 3. Pseudoclasses de Estado CSS (:focus, :invalid): Fornecem feedback visual instantâneo do estado de validação sem sobressaltos.
+- **Enunciado do Desafio**:
+  Crie a marcação e o estilo de um formulário de cadastro de ficha de herói da guilda. O formulário deve conter um <fieldset> com <legend>, campo de texto para Nome do Herói vinculado explicitamente ao seu <label>, campo <select> para escolha do Universo, e campo de e-mail com validação nativa (type="email" e required). Estilize os campos com bordas nítidas e realce de foco (:focus) sem remover o contorno acessível.
+- **Código Inicial (Template)**:
+  ```html
+  <form class="form-alistamento">
+    <fieldset>
+      <legend>Dados de Alistamento do Aventureiro</legend>
+      
+      <div class="campo-grupo">
+        <label for="nome-heroi">Nome do Aventureiro:</label>
+        <input type="text" id="nome-heroi" name="nome" required minlength="2" placeholder="Ex: Gandalf" />
+      </div>
+  
+      <div class="campo-grupo">
+        <label for="universo-heroi">Universo:</label>
+        <select id="universo-heroi" name="universo" required>
+          <option value="">Selecione um universo...</option>
+          <option value="Tolkien">Tolkien</option>
+          <option value="Marvel">Marvel</option>
+          <option value="Anime">Anime</option>
+        </select>
+      </div>
+    </fieldset>
+  </form>
+  ```
+- **Critério de Aceite**:
+  *Todos os campos de entrada devem ter labels vinculados via atributo for e id correspondente; utilizar fieldset e legend; campos obrigatórios identificados e estilização adequada de foco.*
+
+##### Missão 18: A Barra de Vida e Mana com Animações CSS
+- **ID**: `18` | **Módulo**: `3` (Módulo 3 — HTML e CSS)
+- **Dificuldade**: `dificil` (Difícil)
+- **Grimório Teórico & Explicação Conceitual**:
+  > Animações CSS adicionam vida e polimento à experiência do usuário, tornando feedbacks imediatos e naturais. Para criar efeitos como alerta de perigo crítico ou regeneração de energia, combinamos:
+  > 1. A Regra @keyframes: Define quadros-chave da animação ao longo do tempo (de 0% a 100%).
+  > 2. Aceleração por Hardware: Usar propriedades como transform e opacity em vez de alterar margin ou width durante animações contínuas, mantendo 60 quadros por segundo sem causar repaint excessivo.
+  > 3. Propriedade animation: Configura nome, duração, curva de aceleração (ease-in-out) e contagem de iterações (infinite).
+- **Enunciado do Desafio**:
+  Implemente as barras de status do herói (Vida e Mana). Crie uma animação em CSS chamada pulso-critico com @keyframes que faz a barra de vida pulsar (alternando a opacidade entre 0.6 e 1.0 e leve escala de 1.02) quando a classe .perigo estiver presente, sinalizando que os pontos de vida do personagem estão abaixo de 20%.
+- **Código Inicial (Template)**:
+  ```html
+  /* Animação de Pulso Crítico */
+  @keyframes pulso-critico {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.02);
+    }
+  }
+  
+  .barra-vida-container {
+    width: 100%;
+    height: 20px;
+    background: #334155;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .barra-vida-preenchimento.perigo {
+    background: #ef4444;
+    animation: pulso-critico 1s infinite ease-in-out;
+  }
+  ```
+- **Critério de Aceite**:
+  *Definir a animação @keyframes pulso-critico com alternância de opacidade/transform, aplicar ao elemento com a classe perigo e garantir fluidez visual sem sobrecarregar a renderização.*
+
+### Módulo 4 — JavaScript
+
+##### Missão 19: A Forja de Atributos com ES6+
+- **ID**: `19` | **Módulo**: `4` (Módulo 4 — JavaScript)
+- **Dificuldade**: `facil` (Fácil)
+- **Grimório Teórico & Explicação Conceitual**:
+  > O JavaScript moderno (ECMAScript 2015 / ES6+) transformou a linguagem, introduzindo recursos fundamentais para código limpo e seguro:
+  > 1. Desestruturação de Objetos (const { nome, poder } = heroi): Permite extrair propriedades sem repetir o nome do objeto várias vezes.
+  > 2. Operador Spread (...heroi): Cria cópias rasas de objetos permitindo Imutabilidade (um dos pilares do React e de aplicações modernas), alterando propriedades sem mutar a referência original.
+  > 3. Template Literals (`Herói: ${nome}`): Facilita concatenação de strings com expressões dinâmicas interpoladas.
+  > 4. Arrow Functions (const fn = () => ...): Sintaxe compacta e léxica para funções.
+- **Enunciado do Desafio**:
+  Na forja mágica, os atributos de um herói são aprimorados. Crie a função atualizarPoderHeroi(heroi, bonusPoder) que recebe um objeto de personagem { id, nome, classe, poder } e um valor numérico de bônus. A função deve retornar um NOVO objeto (sem alterar o objeto original recebido) contendo todos os atributos originais copiados via spread, o poder recalculado limitado ao teto de 100 (conforme a regra de negócio RN01), e um novo campo statusTexto formatado como: "O herói [nome] da classe [classe] possui [novoPoder] de poder!".
+- **Código Inicial (Template)**:
+  ```javascript
+  /**
+   * Atualiza o poder do herói com imutabilidade e teto RN01.
+   * @param {{ id: number, nome: string, classe: string, poder: number }} heroi
+   * @param {number} bonusPoder
+   * @returns {object} Novo objeto com dados atualizados.
+   */
+  function atualizarPoderHeroi(heroi, bonusPoder) {
+    // TODO: Use destructuring, spread operator e limite em 100 (RN01)
+  }
+  ```
+- **Critério de Aceite**:
+  *A função não deve mutar o objeto recebido como argumento, deve respeitar a constraint RN01 com poder <= 100, e retornar o campo statusTexto com a interpolação solicitada.*
+
+##### Missão 20: O Manipulador do Domínio do DOM
+- **ID**: `20` | **Módulo**: `4` (Módulo 4 — JavaScript)
+- **Dificuldade**: `facil` (Fácil)
+- **Grimório Teórico & Explicação Conceitual**:
+  > O DOM (Document Object Model) é a representação orientada a objetos da página web que permite ao JavaScript interagir dinamicamente com o HTML.
+  > Conceitos essenciais de manipulação do DOM:
+  > 1. Seleção de Elementos (document.querySelector): Localiza elementos usando a mesma sintaxe de seletores CSS (#id, .classe).
+  > 2. Escuta de Eventos (addEventListener("click", handler)): Registra ouvintes para reagir a interações do usuário de forma desacoplada.
+  > 3. Manipulação de Classes (element.classList.add / toggle): A melhor prática para alterar o visual de um componente sem injetar estilos inline.
+  > 4. Controle de Propriedades: Desabilitar botões (button.disabled = true) para evitar múltiplos cliques acidentais.
+- **Enunciado do Desafio**:
+  Implemente a função conectarBotaoEquipar(botaoId, displayId) que seleciona o botão de ação e o elemento de status da armadura. Ao ocorrer o clique no botão, o script deve: atualizar o texto do display para "Armadura Lendária Equipada!", adicionar a classe CSS .ativo ao display, e alterar a propriedade disabled do botão para true para impedir novos cliques.
+- **Código Inicial (Template)**:
+  ```javascript
+  function conectarBotaoEquipar(botaoId, displayId) {
+    const botao = document.querySelector(`#${botaoId}`);
+    const display = document.querySelector(`#${displayId}`);
+  
+    if (!botao || !display) return;
+  
+    botao.addEventListener("click", () => {
+      // TODO: Atualize o texto, adicione a classe 'ativo' e desabilite o botão
+    });
+  }
+  ```
+- **Critério de Aceite**:
+  *Localizar os elementos pelo ID, anexar o ouvinte de evento click, alternar classe usando classList.add("ativo"), atualizar o textContent e setar disabled = true no botão.*
+
+##### Missão 21: O Grimório dos Métodos de Array
+- **ID**: `21` | **Módulo**: `4` (Módulo 4 — JavaScript)
+- **Dificuldade**: `medio` (Médio)
+- **Grimório Teórico & Explicação Conceitual**:
+  > Em JavaScript profissional, laços imperativos (for e while) são frequentemente substituídos por Métodos Funcionais de Array que não possuem efeitos colaterais:
+  > 1. array.filter(item => boolean): Cria um novo array apenas com os elementos que atendem ao predicado lógico.
+  > 2. array.map(item => transformacao): Transforma cada elemento da lista aplicando uma função e retornando um novo array de mesmo tamanho.
+  > 3. array.reduce((acumulador, item) => ..., valorInicial): Reduz todo o array a um único valor acumulado (como somas, contagens ou médias).
+  > A combinação dessas três funções permite encadear transformações de dados de forma declarativa e legível.
+- **Enunciado do Desafio**:
+  O conselho dos magos necessita auditar o poder dos membros da guilda. Escreva a função auditarMembrosGuilda(membros) que recebe um array de objetos de heróis ({ nome: string, ativo: boolean, poder: number }) e retorna um objeto estatístico contendo: nomesAtivos (array contendo apenas os nomes dos membros com ativo === true em letras maiúsculas via .map()), totalPoderAtivo (a soma do poder de todos os membros ativos via .reduce()) e mediaPoderAtivo (média aritmética do poder dos membros ativos arredondada em número inteiro).
+- **Código Inicial (Template)**:
+  ```javascript
+  function auditarMembrosGuilda(membros) {
+    // TODO: Use .filter(), .map() e .reduce() para gerar o resumo estatístico
+  }
+  ```
+- **Critério de Aceite**:
+  *Usar obrigatoriamente os métodos filter, map e reduce da API de Array do JavaScript; retornar o objeto com as 3 chaves solicitadas e tratar listas vazias sem gerar divisão por zero.*
+
+##### Missão 22: O Guardião dos Formulários e Eventos Assíncronos
+- **ID**: `22` | **Módulo**: `4` (Módulo 4 — JavaScript)
+- **Dificuldade**: `medio` (Médio)
+- **Grimório Teórico & Explicação Conceitual**:
+  > O comportamento nativo de envio de formulários no navegador é disparar uma requisição HTTP síncrona que recarrega a página inteira. Em SPAs (Single Page Applications) e aplicações modernas com Next.js:
+  > 1. event.preventDefault(): Impede o comportamento padrão do navegador permitindo que o JavaScript assuma o controle do fluxo.
+  > 2. Validação Pré-Envio no Cliente: Economiza requisições verificando campos vazios ou formatos inválidos antes de chamar o backend.
+  > 3. Feedback de Carregamento: Atualizar o estado visual do botão (exibindo "Salvando..." ou um spinner) melhora sensivelmente a experiência do usuário (UX).
+- **Enunciado do Desafio**:
+  Implemente a função configurarEnvioSeguro(formElement, servicoEnvio) que adiciona o listener de submissão ao formulário. O script deve interceptar o envio com e.preventDefault(), validar se os campos de texto do formulário não estão vazios, desabilitar o botão de submit alterando seu texto para "Enviando...", invocar a função assíncrona servicoEnvio com os dados extraídos, e reabilitar o botão ao término do processo.
+- **Código Inicial (Template)**:
+  ```javascript
+  function configurarEnvioSeguro(formElement, servicoEnvio) {
+    formElement.addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+      // TODO: Valide os campos, desabilite o botão e invoque servicoEnvio()
+    });
+  }
+  ```
+- **Critério de Aceite**:
+  *Invocar preventDefault no evento de submit, validar inputs antes do disparo, gerenciar o estado disabled e texto de loading no botão, e capturar eventuais falhas com bloco try/finally.*
+
+##### Missão 23: O Feitiço da API Assíncrona
+- **ID**: `23` | **Módulo**: `4` (Módulo 4 — JavaScript)
+- **Dificuldade**: `dificil` (Difícil)
+- **Grimório Teórico & Explicação Conceitual**:
+  > A comunicação com APIs REST externas é a base da computação em nuvem. A Web API moderna fornece a função fetch(), que opera com Promises e a sintaxe intuitiva async/await.
+  > Armadilhas comuns e boas práticas com fetch():
+  > 1. O mito de que fetch() falha em erros 404/500: O fetch nativo não rejeita a Promise quando a API responde com código HTTP de erro (como 404 Not Found ou 500 Internal Server Error). Ele só rejeita em falhas catastróficas de rede.
+  > 2. A verificação de res.ok: É mandatório checar se res.ok é verdadeiro (status HTTP entre 200 e 299). Se for falso, devemos disparar um throw new Error(...) explicitamente.
+  > 3. Ordenação de Arrays (.sort()): Para ordenar números de forma decrescente: array.sort((a, b) => b.poder - a.poder).
+- **Enunciado do Desafio**:
+  Para invocar os feitiços mais poderosos do reino, o grimório digital precisa consultar os tomos sagrados armazenados em uma API remota. Implemente a função assíncrona buscarPoderesGuilda(url: string) em JavaScript moderno (ES6+). A função deve realizar a requisição HTTP usando fetch(), validar se a resposta retornou status 200 (lançando exceção amigável caso ocorra erro 4xx ou 5xx com !res.ok), converter os dados para JSON, extrair o array de magias e retorná-lo ordenado de forma decrescente pelo nível de poder arcano de cada item.
+- **Código Inicial (Template)**:
+  ```javascript
+  /**
+   * Consulta o grimório sagrado consumindo a API REST assíncrona.
+   * @param {string} url - Endereço do endpoint do grimório da guilda.
+   * @returns {Promise<Array<{ nome: string, poder: number }>>} Lista ordenada de poderes.
+   */
+  async function buscarPoderesGuilda(url) {
+    try {
+      // TODO: Realize o fetch com verificação de status HTTP (200 OK)
+      // TODO: Trate respostas 4xx e 5xx lançando erro com mensagem descritiva
+      // TODO: Retorne o array de poderes ordenado pelo poder (decrescente)
+    } catch (erro) {
+      console.error("Falha ao conjurar feitiço de consulta:", erro.message);
+      throw erro;
+    }
+  }
+  ```
+- **Critério de Aceite**:
+  *A função deve usar async/await com try/catch, verificar res.ok rejeitando respostas HTTP de erro, tratar exceções de rede e retornar a Promise resolvida com os poderes ordenados por nível de poder (decrescente).*
+
+##### Missão 24: O Oráculo do Cache e Debounce de Busca
+- **ID**: `24` | **Módulo**: `4` (Módulo 4 — JavaScript)
+- **Dificuldade**: `dificil` (Difícil)
+- **Grimório Teórico & Explicação Conceitual**:
+  > Quando implementamos campos de busca em tempo real com consulta a APIs externas (como a sincronização de perfis do GitHub no CodeQuest, RF12), dois padrões de engenharia de software são vitais:
+  > 1. Debounce: Adia a execução da chamada de rede até que o usuário pare de digitar por um intervalo (ex: 300ms), cancelando o temporizador pendente via clearTimeout() a cada nova tecla pressionada.
+  > 2. Cache em Memória (Map): Armazena respostas anteriores indexadas pelo termo buscado. Se o usuário digitar um termo já consultado, a resposta é entregue instantaneamente sem consumir requisições nem limites de taxa da API externa.
+  > A fusão desses padrões garante altíssima responsividade da interface e economia brutal de recursos de infraestrutura.
+- **Enunciado do Desafio**:
+  Crie a função de alta ordem criarBuscadorComDebounceECache(funcaoBuscaApi, delayMs) que gerencia consultas de heróis. Ela deve manter um Map interno de cache e retornar uma função que recebe o termo de busca. Se o termo já estiver no cache, retorna o valor imediatamente resolvido em Promise; caso contrário, aguarda o período de debounce sem novas chamadas, executa funcaoBuscaApi(termo), armazena no cache e retorna o resultado.
+- **Código Inicial (Template)**:
+  ```javascript
+  /**
+   * Fábrica de busca otimizada com Debounce e Cache em memória.
+   * @param {Function} funcaoBuscaApi - Função assíncrona original de busca.
+   * @param {number} delayMs - Tempo de espera em milissegundos.
+   * @returns {Function} Função otimizada para uso em inputs.
+   */
+  function criarBuscadorComDebounceECache(funcaoBuscaApi, delayMs = 300) {
+    const cache = new Map();
+    let temporizador = null;
+  
+    return function (termo) {
+      // TODO: Verifique cache e implemente o debounce com clearTimeout/setTimeout
+    };
+  }
+  ```
+- **Critério de Aceite**:
+  *Retornar valor em cache sem invocar a API externa para termos repetidos; reiniciar o temporizador se nova chamada ocorrer antes do delay; retornar Promise resolvida com o resultado da busca.*
 
 ### Módulo F — Gamificação, Poder e Ranking
 * **RF16** — Algoritmo de cálculo de poder dinâmico equilibrado combinando a soma ponderada de missões completadas com a atividade verificada no GitHub, mantendo o resultado estritamente no intervalo [0, 100]. *(Futuro)*
@@ -401,6 +1036,7 @@ erDiagram
         int id PK
         int modulo_id FK
         varchar titulo
+        text explicacao
         text enunciado
         text codigo_inicial
         text criterio_aceite
@@ -537,6 +1173,7 @@ CREATE TABLE IF NOT EXISTS missoes (
     id SERIAL PRIMARY KEY,
     modulo_id INT REFERENCES modulos(id) ON DELETE CASCADE,
     titulo VARCHAR(150) NOT NULL,
+    explicacao TEXT,
     enunciado TEXT NOT NULL,
     codigo_inicial TEXT,
     criterio_aceite TEXT NOT NULL,

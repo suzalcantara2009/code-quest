@@ -43,6 +43,7 @@ export default function AdminMissoesPage() {
   const [moduloId, setModuloId] = useState<number>(1);
   const [titulo, setTitulo] = useState('');
   const [dificuldade, setDificuldade] = useState<'facil' | 'medio' | 'dificil'>('facil');
+  const [explicacao, setExplicacao] = useState('');
   const [enunciado, setEnunciado] = useState('');
   const [criterioAceite, setCriterioAceite] = useState('');
   const [codigoInicial, setCodigoInicial] = useState('');
@@ -116,6 +117,7 @@ export default function AdminMissoesPage() {
     const payload = {
       modulo_id: Number(moduloId),
       titulo: titulo.trim(),
+      explicacao: explicacao.trim() || undefined,
       enunciado: enunciado.trim(),
       dificuldade,
       criterio_aceite: criterioAceite.trim(),
@@ -169,6 +171,7 @@ export default function AdminMissoesPage() {
 
       // Limpa os campos
       setTitulo('');
+      setExplicacao('');
       setEnunciado('');
       setCriterioAceite('');
       setCodigoInicial('');
@@ -332,6 +335,28 @@ export default function AdminMissoesPage() {
                   </div>
                 </div>
 
+                {/* Explicação Teórica Conceitual */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1.5 flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>Grimório Teórico / Fundamentos Conceituais</span>
+                    </span>
+                    <span className="text-xs text-indigo-400 font-normal">Recomendado</span>
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={explicacao}
+                    onChange={(e) => setExplicacao(e.target.value)}
+                    disabled={papelUsuario !== 'admin' || salvando}
+                    placeholder="Apresente a base teórica, conceitos de sintaxe, boas práticas pedagógicas e metáfora RPG..."
+                    className="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-slate-100 text-sm placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                  />
+                  {erros.explicacao && (
+                    <span className="text-xs text-red-400 mt-1 block">{erros.explicacao}</span>
+                  )}
+                </div>
+
                 {/* Enunciado */}
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-1.5">
@@ -481,6 +506,16 @@ export default function AdminMissoesPage() {
                     </CardHeader>
 
                     <CardContent className="space-y-3 pt-0 text-sm">
+                      {m.explicacao && (
+                        <div className="p-3 rounded-lg bg-indigo-950/40 border border-indigo-900/60 text-xs">
+                          <strong className="text-indigo-300 block mb-1 flex items-center gap-1.5 font-semibold">
+                            <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
+                            Grimório Teórico / Base de Conhecimento:
+                          </strong>
+                          <p className="line-clamp-2 leading-relaxed text-slate-300">{m.explicacao}</p>
+                        </div>
+                      )}
+
                       <p className="text-slate-300 leading-relaxed text-xs sm:text-sm">
                         {m.enunciado}
                       </p>

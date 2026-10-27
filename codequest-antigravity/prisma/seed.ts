@@ -1,4 +1,6 @@
 import { PrismaClient } from '@prisma/client';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const modulos = [
   {
@@ -324,6 +326,89 @@ async function main() {
           dificuldade: missao.dificuldade,
         },
       });
+    }
+
+    // 3. Aulas Técnicas e Sequência de Atividades Passo a Passo
+    const courseLessonsPath = path.resolve(__dirname, '../src/lib/course-lessons.json');
+    if (fs.existsSync(courseLessonsPath)) {
+      const courseLessonsData = JSON.parse(fs.readFileSync(courseLessonsPath, 'utf8'));
+      let totalAulasCadastradas = 0;
+      let totalAtividadesCadastradas = 0;
+
+      for (const [modIdStr, aulas] of Object.entries(courseLessonsData)) {
+        const modId = Number(modIdStr);
+        for (const aula of aulas as any[]) {
+          await prisma.aula.upsert({
+            where: { id: aula.id },
+            update: {
+              modulo_id: modId,
+              numero: aula.numero,
+              titulo: aula.titulo,
+              subtitulo: aula.subtitulo,
+              tempo_estimado: aula.tempoEstimado,
+              xp_recompensa: aula.xpRecompensa || 40,
+              resumo: aula.resumo,
+              objetivos: aula.objetivos,
+              secoes: aula.secoes,
+              conceitos_chave: aula.conceitosChave,
+            },
+            create: {
+              id: aula.id,
+              modulo_id: modId,
+              numero: aula.numero,
+              titulo: aula.titulo,
+              subtitulo: aula.subtitulo,
+              tempo_estimado: aula.tempoEstimado,
+              xp_recompensa: aula.xpRecompensa || 40,
+              resumo: aula.resumo,
+              objetivos: aula.objetivos,
+              secoes: aula.secoes,
+              conceitos_chave: aula.conceitosChave,
+            },
+          });
+          totalAulasCadastradas++;
+
+          for (const atv of aula.sequenciaAtividades || []) {
+            await prisma.atividade.upsert({
+              where: { id: atv.id },
+              update: {
+                aula_id: aula.id,
+                modulo_id: modId,
+                ordem: atv.ordem,
+                titulo: atv.titulo,
+                descricao_passo: atv.descricaoPasso,
+                tipo: atv.tipo || 'conceitual',
+                missao_id: atv.missaoId || null,
+                dificuldade: atv.dificuldade || 'facil',
+                xp: atv.xp || 15,
+                dica: atv.dica || null,
+                template_codigo: atv.templateCodigo || null,
+                criterio_aceite: atv.criterioAceite,
+                instrucoes_passo_a_passo: atv.instrucoesPassoAPasso || [],
+              },
+              create: {
+                id: atv.id,
+                aula_id: aula.id,
+                modulo_id: modId,
+                ordem: atv.ordem,
+                titulo: atv.titulo,
+                descricao_passo: atv.descricaoPasso,
+                tipo: atv.tipo || 'conceitual',
+                missao_id: atv.missaoId || null,
+                dificuldade: atv.dificuldade || 'facil',
+                xp: atv.xp || 15,
+                dica: atv.dica || null,
+                template_codigo: atv.templateCodigo || null,
+                criterio_aceite: atv.criterioAceite,
+                instrucoes_passo_a_passo: atv.instrucoesPassoAPasso || [],
+              },
+            });
+            totalAtividadesCadastradas++;
+          }
+        }
+      }
+      console.log(`✅ Aulas cadastradas no Prisma: ${totalAulasCadastradas}`);
+      console.log(`✅ Atividades cadastradas no Prisma: ${totalAtividadesCadastradas}`);
     }
 
     console.log('✅ Seed finalizado com sucesso no Prisma!');

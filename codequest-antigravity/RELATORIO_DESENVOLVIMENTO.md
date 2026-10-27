@@ -274,3 +274,57 @@ Route (app)                              Size     First Load JS
   - [ ] Implementar envio e deliberação de denúncias por moderadores (**RF19**, **RF19a**).
   - [ ] Implementar criação e ingresso em salas virtuais de educadores (**RF20**).
   - [ ] Implementar exportação de dados pessoais em JSON para portabilidade LGPD (**RF21a**).
+
+---
+
+## 5. Implementação Completa das Aulas Técnicas, Atividades e Persistência de Progresso (27 de Outubro de 2026) 🎓⚔️
+
+### 5.1 Motivação e Resolução Pedagógica
+Identificou-se que a trilha de aprendizagem original apresentava lacunas teóricas e que os exercícios estavam generalistas, sem guias de fundamentação e sem um encadeamento prático passo a passo para orientar a transição da teoria à prática nos desafios de código.
+
+Para solucionar essa demanda com excelência pedagógica e técnica, foi desenvolvido e integrado ao CodeQuest um ecossistema curricular completo:
+1. **18 Aulas Técnicas Profundas**:
+   - **Módulo 1 — Programação em Blocos & Pensamento Computacional** (5 Aulas):
+     1. Algoritmos, Sequenciamento e Pensamento Computacional
+     2. Variáveis, Tipos de Dados e Estado de Memória
+     3. Tomada de Decisão: Condicionais e Lógica Booleana
+     4. Modularização e Procedimentos Reutilizáveis (DRY)
+     5. Algoritmos Autônomos e Resolução de Labirintos (Regra da Mão Direita)
+   - **Módulo 2 — Python** (5 Aulas):
+     1. Sintaxe Pythônica, Indentação e Tipagem Dinâmica Forte
+     2. Funções Puras, Parâmetros e Type Hints (PEP 484 & Docstrings PEP 257)
+     3. Listas, Métodos de Ordenação e List Comprehensions Pythônicas
+     4. Dicionários, Tabelas Hash O(1), Agregações e Análise de Dados
+     5. Programação Orientada a Objetos (POO), Classes, Herança e Polimorfismo
+   - **Módulo 3 — HTML e CSS** (4 Aulas):
+     1. HTML5 Semântico: Estrutura, Sentido e SEO
+     2. Acessibilidade Web (WCAG 2.1 AA) e Design Inclusivo
+     3. Layout Unidimensional Moderno com CSS Flexbox
+     4. Layout Bidimensional Fluido com CSS Grid e Design Responsivo
+   - **Módulo 4 — JavaScript** (4 Aulas):
+     1. JavaScript Moderno ES6+, Imutabilidade, Desestruturação e Escopo
+     2. Métodos Funcionais de Array: filter, map e reduce
+     3. Manipulação da Árvore DOM e Gestão Reativa de Eventos
+     4. Programação Assíncrona, Promises e Consumo Resiliente com Fetch API
+
+2. **60 Atividades Práticas Passo a Passo e Encadeamento das 24 Missões Oficiais**:
+   - Cada aula técnica possui de 3 a 4 passos práticos sequenciais (Passos Conceituais, Desafios de Código e Desafios Oficiais).
+   - **100% das 24 missões oficiais do catálogo** (#1 a #24) estão integradas na sequência pedagógica com botão de navegação direta para o editor interativo de código (`/missoes/[id]`).
+
+3. **Arquitetura de Dados Relacional e Persistência no Neon PostgreSQL**:
+   - Modelagem de 4 novas entidades no Prisma ORM (`prisma/schema.prisma`) e DDL puro (`sql/schema.sql`):
+     - `aulas`: Metadados, tempo estimado, XP, seções explicativas em JSONB e conceitos-chave.
+     - `atividades`: Passos da sequência, vínculos a missões oficiais, snippets de template e critérios de aceite.
+     - `progresso_aulas`: Registro individual de conclusão de aula (`UNIQUE(usuario_id, modulo_id, aula_id)`).
+     - `progresso_atividades`: Registro de superação de atividades (`UNIQUE(usuario_id, atividade_id)`).
+   - Scripts de carga automatizados (`scripts/seed.js`, `prisma/seed.ts`, `gen-sql-seed.js` e `sql/seed.sql`).
+   - Todos os dados foram gravados e validados no banco Neon PostgreSQL com **18 aulas**, **60 atividades** e **24 missões**.
+
+4. **Interface Reativa de Alta Fidelidade**:
+   - Telas `/trilha` e `/trilha/[moduloId]` com navegação por abas (`Aulas Técnicas & Teoria`, `Sequência de Atividades`, `Desafios Práticos Oficiais` e `Cheat Sheet de Sintaxe`).
+   - Checkboxes interativos com persistência instantânea no banco de dados via rotas de API (`POST /api/progresso`, `GET /api/trilha/aulas`).
+   - Snippets de código didáticos com botão de cópia com feedback visual, analogias temáticas de RPG, alertas de armadilhas comuns e dicas de especialistas.
+   - Cálculo automático de XP acumulado e percentual de progresso por módulo e na trilha geral.
+
+5. **Build de Produção 100% Validado**:
+   - `npm run build` gerando com sucesso todas as **39 rotas** do Next.js sem avisos impeditivos ou falhas de tipagem estrita no TypeScript.

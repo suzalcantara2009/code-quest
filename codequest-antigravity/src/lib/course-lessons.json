@@ -310,6 +310,23 @@
             "Valide os testes automatizados.",
             "Submeta a resposta final."
           ]
+        },
+        {
+          "id": "atv-m1-a3-p4",
+          "ordem": 4,
+          "titulo": "Passo 4: Missão Oficial #5 — A Travessia das Pontes Móveis",
+          "descricaoPasso": "Concentre feitiços de sincronização temporal e condições compostas (ponte abaixada E tempo restante >= 3s) para cruzar o abismo sem despencar.",
+          "tipo": "missao_oficial",
+          "missaoId": 5,
+          "dificuldade": "medio",
+          "xp": 50,
+          "dica": "Utilize enquanto (!ponteAbaixada() || obterTempoRestante() < 3) { aguardar(1); } atravessarPonte();.",
+          "criterioAceite": "Cruzar as 3 pontes levadiças sem colidir e sem cair no abismo na Missão #5.",
+          "instrucoesPassoAPasso": [
+            "Acesse a Missão #5 no editor.",
+            "Implemente a checagem dupla da ponte abaixada e cronômetro.",
+            "Execute o simulador e submeta para vencer o abismo."
+          ]
         }
       ]
     },
@@ -599,6 +616,23 @@
             "Abra a Missão #7",
             "Implemente calcular_dano()",
             "Submeta e garanta seus pontos"
+          ]
+        },
+        {
+          "id": "atv-m2-a1-p4",
+          "ordem": 4,
+          "titulo": "Passo 4: Missão Oficial #11 — O Validador de Nomes de Aventureiro",
+          "descricaoPasso": "Crie o validador de nomes de personagens verificando se a string possui entre 3 e 20 caracteres alfanuméricos e sem espaços nas extremidades.",
+          "tipo": "missao_oficial",
+          "missaoId": 11,
+          "dificuldade": "facil",
+          "xp": 40,
+          "dica": "Utilize métodos nativos de string em Python como .strip(), .isalnum() e comparação de comprimento com len().",
+          "criterioAceite": "Retornar True para nomes canônicos válidos e False para entradas maliciosas ou fora do padrão.",
+          "instrucoesPassoAPasso": [
+            "Acesse a Missão #11 no catálogo de desafios.",
+            "Implemente a função validar_nome_aventureiro(nome: str) -> bool.",
+            "Submeta e receba o selo de escriba oficial."
           ]
         }
       ]
@@ -1177,6 +1211,23 @@
             "Ajuste os atributos de acessibilidade",
             "Submeta a solução"
           ]
+        },
+        {
+          "id": "atv-m3-a2-p4",
+          "ordem": 4,
+          "titulo": "Passo 4: Missão Oficial #17 — O Formulário Encantado de Alistamento",
+          "descricaoPasso": "Estruture um formulário de cadastro 100% acessível associando etiquetas <label for> aos inputs, aria-describedby e contraste em conformidade com WCAG 2.1 AA.",
+          "tipo": "missao_oficial",
+          "missaoId": 17,
+          "dificuldade": "medio",
+          "xp": 45,
+          "dica": "Todos os campos <input> devem possuir atributo id coincidente com o for do seu respectivo <label>.",
+          "criterioAceite": "Formulário validado com árvore de acessibilidade limpa e sem erros de associação na Missão #17.",
+          "instrucoesPassoAPasso": [
+            "Acesse a Missão #17 no editor integrado.",
+            "Conecte todos os labels com atributos for/id e aria-required.",
+            "Submeta a solução e garanta a insígnia de acessibilidade."
+          ]
         }
       ]
     },
@@ -1260,18 +1311,18 @@
         {
           "id": "atv-m3-a3-p3",
           "ordem": 3,
-          "titulo": "Passo 3: Missão Oficial #16 — O Mural da Taverna",
-          "descricaoPasso": "Construa o mural responsivo de anúncios da guilda alinhando cartões com Flexbox na Missão #16.",
+          "titulo": "Passo 3: Missão Oficial #15 — O Estandarte Responsivo da Guilda",
+          "descricaoPasso": "Crie o estandarte com navegação flexível em coluna para smartphones e linha contínua para telas desktop com media query.",
           "tipo": "missao_oficial",
-          "missaoId": 16,
+          "missaoId": 15,
           "dificuldade": "medio",
           "xp": 50,
-          "dica": "Use flex-wrap: wrap e espaçamento com gap.",
-          "criterioAceite": "Concluir a estilização na Missão #16.",
+          "dica": "Defina flex-direction: column por padrão e em @media (min-width: 768px) alterne para flex-direction: row com justify-content: space-between.",
+          "criterioAceite": "Garantir adaptação responsiva fluida em mobile e desktop na Missão #15.",
           "instrucoesPassoAPasso": [
-            "Abra a Missão #16",
-            "Implemente o layout flexível",
-            "Submeta a solução"
+            "Abra a Missão #15 no editor de código.",
+            "Escreva o layout Flexbox responsivo mobile-first.",
+            "Submeta para validar o teste de renderização visual."
           ]
         }
       ]
@@ -1355,18 +1406,35 @@
         {
           "id": "atv-m3-a4-p3",
           "ordem": 3,
-          "titulo": "Passo 3: Missão Oficial #17 — O Inventário em Grade Mágica",
-          "descricaoPasso": "Construa o inventário responsivo completo de 24 slots mágicos na Missão #17.",
+          "titulo": "Passo 3: Missão Oficial #16 — O Inventário em Grade Mágica",
+          "descricaoPasso": "Construa o inventário responsivo completo de 24 slots mágicos utilizando repeat(auto-fill, minmax(100px, 1fr)) e gap uniforme.",
           "tipo": "missao_oficial",
-          "missaoId": 17,
+          "missaoId": 16,
           "dificuldade": "dificil",
           "xp": 50,
-          "dica": "Garanta visual limpo em telas pequenas e monitores desktop.",
-          "criterioAceite": "Concluir a Missão #17 no catálogo oficial.",
+          "dica": "Evite larguras fixas com width; deixe a função minmax() calcular a fração fluida 1fr.",
+          "criterioAceite": "Concluir a Missão #16 no catálogo oficial com grid 2D adaptativo.",
           "instrucoesPassoAPasso": [
-            "Abra a Missão #17",
-            "Implemente a grade responsiva",
-            "Submeta a solução no editor"
+            "Abra a Missão #16 no editor de código.",
+            "Implemente a grade responsiva com auto-fill.",
+            "Submeta a solução e confira o arranjo dos slots."
+          ]
+        },
+        {
+          "id": "atv-m3-a4-p4",
+          "ordem": 4,
+          "titulo": "Passo 4: Missão Oficial #18 — A Barra de Vida e Mana com Animações CSS",
+          "descricaoPasso": "Crie barras de status reativas com transições suaves (transition: width 0.4s ease-in-out) e efeito pulsante de mana usando keyframes CSS.",
+          "tipo": "missao_oficial",
+          "missaoId": 18,
+          "dificuldade": "medio",
+          "xp": 45,
+          "dica": "Defina @keyframes pulso-mana { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }.",
+          "criterioAceite": "Animações suaves e barras com transição temporal na Missão #18.",
+          "instrucoesPassoAPasso": [
+            "Acesse a Missão #18 no catálogo.",
+            "Declare as transições CSS e a regra de keyframes.",
+            "Submeta para inspecionar os efeitos visuais."
           ]
         }
       ]
@@ -1452,18 +1520,18 @@
         {
           "id": "atv-m4-a1-p3",
           "ordem": 3,
-          "titulo": "Passo 3: Missão Oficial #20 — O Grimório Imutável",
-          "descricaoPasso": "Implemente a forja de fichas e equipamentos respeitando o princípio de imutabilidade na Missão #20.",
+          "titulo": "Passo 3: Missão Oficial #19 — A Forja de Atributos com ES6+",
+          "descricaoPasso": "Implemente a função forjar_equipamento() que mescla atributos mágicos usando o spread operator (...) e desestruturação sem modificar o objeto original.",
           "tipo": "missao_oficial",
-          "missaoId": 20,
+          "missaoId": 19,
           "dificuldade": "medio",
           "xp": 50,
-          "dica": "Nunca faça mutações diretas em arrays ou objetos passados por parâmetro.",
-          "criterioAceite": "Concluir a Missão #20 no catálogo oficial.",
+          "dica": "Retorne { ...equipamentoBase, ...encantamento, poderFinal: calcular() } sem usar mutação direta.",
+          "criterioAceite": "Concluir a Missão #19 com princípios estritos de imutabilidade funcional.",
           "instrucoesPassoAPasso": [
-            "Abra a Missão #20",
-            "Implemente a lógica imutável",
-            "Submeta a solução no editor"
+            "Acesse a Missão #19 no editor.",
+            "Aplique spread operator e desestruturação de parâmetros.",
+            "Submeta para validar os testes sem efeitos colaterais."
           ]
         }
       ]
@@ -1654,6 +1722,23 @@
             "Conecte os eventos do DOM",
             "Submeta a solução no editor"
           ]
+        },
+        {
+          "id": "atv-m4-a3-p4",
+          "ordem": 4,
+          "titulo": "Passo 4: Missão Oficial #20 — O Manipulador do Domínio do DOM",
+          "descricaoPasso": "Manipule a árvore viva do documento: selecione nós com querySelectorAll, alterne classes CSS de tema e renderize dinamicamente a lista de itens da guilda.",
+          "tipo": "missao_oficial",
+          "missaoId": 20,
+          "dificuldade": "medio",
+          "xp": 45,
+          "dica": "Utilize elemento.classList.toggle(\"ativo\") e createElement(\"li\") associado a appendChild().",
+          "criterioAceite": "Modificar nós da árvore DOM conforme os eventos disparados na Missão #20.",
+          "instrucoesPassoAPasso": [
+            "Abra a Missão #20 no catálogo.",
+            "Implemente os seletores e manipuladores de nós.",
+            "Submeta a solução no editor interativo."
+          ]
         }
       ]
     },
@@ -1748,6 +1833,23 @@
             "Abra a Missão #23",
             "Implemente a requisição assíncrona",
             "Submeta a solução final"
+          ]
+        },
+        {
+          "id": "atv-m4-a4-p4",
+          "ordem": 4,
+          "titulo": "Passo 4: Missão Oficial #24 — O Oráculo do Cache e Debounce de Busca",
+          "descricaoPasso": "Construa o mecanismo de busca com debounce (clearTimeout/setTimeout) e cache em memória (Map) para evitar disparos redundantes à API de missões.",
+          "tipo": "missao_oficial",
+          "missaoId": 24,
+          "dificuldade": "dificil",
+          "xp": 60,
+          "dica": "Se cache.has(termo), retorne imediatamente a Promise com cache.get(termo) sem acionar nova requisição de rede.",
+          "criterioAceite": "Concluir a Missão #24 no desafio mestre da trilha pedagógica.",
+          "instrucoesPassoAPasso": [
+            "Acesse a Missão #24 no catálogo oficial.",
+            "Implemente o cache em Map e o cancelamento do temporizador de debounce.",
+            "Submeta a solução e conquiste o troféu final da trilha."
           ]
         }
       ]

@@ -139,7 +139,7 @@ export default function ModuloDetalhesPage({ params }: { params: { moduloId: str
         const data = await res.json();
         if (data.sucesso && Array.isArray(data.dados) && data.dados.length > 0) {
           setAulasModulo(data.dados);
-          if (!aulaSelecionadaId || !data.dados.some((a) => a.id === aulaSelecionadaId)) {
+          if (!aulaSelecionadaId || !data.dados.some((a: AulaTecnica) => a.id === aulaSelecionadaId)) {
             setAulaSelecionadaId(data.dados[0]?.id || '');
           }
         }

@@ -87,9 +87,14 @@ for (const [modIdStr, aulas] of Object.entries(courseLessons)) {
   }
 }
 
-if (!seedSql.includes('INSERT INTO aulas')) {
-  fs.writeFileSync(seedSqlPath, seedSql + sqlBuffer, 'utf8');
-  console.log('Appended aulas and atividades to sql/seed.sql successfully!');
+const marker = '-- ========================================================\n-- Usuário Padrão';
+const markerIdx = seedSql.indexOf(marker);
+
+if (markerIdx !== -1) {
+  const baseSql = seedSql.substring(0, markerIdx);
+  fs.writeFileSync(seedSqlPath, baseSql.trim() + '\n' + sqlBuffer, 'utf8');
+  console.log('Updated sql/seed.sql with the latest aulas and atividades successfully!');
 } else {
-  console.log('sql/seed.sql already has aulas');
+  fs.writeFileSync(seedSqlPath, seedSql.trim() + '\n' + sqlBuffer, 'utf8');
+  console.log('Appended aulas and atividades to sql/seed.sql successfully!');
 }

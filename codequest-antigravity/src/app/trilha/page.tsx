@@ -29,7 +29,7 @@ const MODULOS_TRILHA = [
     descricao:
       'Fundamentos de lógica algorítmica, variáveis, estruturas condicionais e laços visuais de repetição.',
     total_aulas: 5,
-    total_atividades: 15,
+    total_atividades: 16,
     missao_titulo: 'O Despertar dos Blocos Mágicos',
     dificuldade: 'facil' as const,
     icone: Blocks,
@@ -42,7 +42,7 @@ const MODULOS_TRILHA = [
     descricao:
       'Sintaxe limpa, estruturas de dados, funções puras, tipagem estática e algoritmos orientados a objetos.',
     total_aulas: 5,
-    total_atividades: 15,
+    total_atividades: 16,
     missao_titulo: 'O Cálculo do Dano Crítico',
     dificuldade: 'facil' as const,
     icone: Code,
@@ -55,7 +55,7 @@ const MODULOS_TRILHA = [
     descricao:
       'Estruturação semântica com HTML5, acessibilidade web (WCAG) e estilização responsiva com CSS Grid e Flexbox.',
     total_aulas: 4,
-    total_atividades: 12,
+    total_atividades: 14,
     missao_titulo: 'O Estandarte Responsivo da Guilda',
     dificuldade: 'medio' as const,
     icone: FileCode,
@@ -68,7 +68,7 @@ const MODULOS_TRILHA = [
     descricao:
       'Interatividade no navegador, manipulação da árvore DOM, Promises e consumo de APIs assíncronas com fetch.',
     total_aulas: 4,
-    total_atividades: 12,
+    total_atividades: 14,
     missao_titulo: 'O Feitiço da API Assíncrona',
     dificuldade: 'dificil' as const,
     icone: Layers,

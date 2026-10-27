@@ -112,6 +112,9 @@ O sistema possui 5 perfis de usuários com níveis hierárquicos e permissões e
 ### Módulo E — Trilha de Aprendizagem e Catálogo Oficial de Missões
 * **RF13** — Trilha pedagógica estruturada em 4 módulos sequenciais navegáveis: **Módulo 1 — Programação em Blocos**, **Módulo 2 — Python**, **Módulo 3 — HTML e CSS** e **Módulo 4 — JavaScript**. *(MVP)*
 * **RF13a** — Exibição das competências técnicas, ementa detalhada e percentual de progresso concluído em cada módulo. *(V2)*
+* **RF13b** — Aulas técnicas detalhadas por módulo contendo objetivos pedagógicos, fundamentação teórica formal, analogia temática de RPG, snippets didáticos com análise linha a linha, dicas pro e armadilhas comuns. *(V2)*
+* **RF13c** — Sequência prática de atividades passo a passo estruturada em passos conceituais, desafios de código e desafios oficiais com integração direta ao editor de código e critérios de aceite. *(V2)*
+* **RF13d** — Persistência relacional do progresso do estudante em aulas técnicas (`progresso_aulas`) e atividades (`progresso_atividades`) com sincronização em tempo real de XP e percentuais. *(V2)*
 * **RF14** — Catálogo oficial de missões pedagógicas contendo título, módulo vinculado, enunciado do desafio, template de código inicial, critério de aceite e nível de dificuldade. *(V2)*
 * **RF14a** — Interface do catálogo de missões (`/missoes`) com filtros combinados em tempo real por nível de dificuldade (Fácil, Médio, Difícil) e por módulo da trilha. *(V2)*
 * **RF15** — Submissão de solução de missões com registro único por ficha na tabela `missoes_concluidas`, impedindo submissões duplicadas e incrementando o poder de combate do personagem. *(V2)*
@@ -951,6 +954,10 @@ O sistema possui 5 perfis de usuários com níveis hierárquicos e permissões e
 * `fichas` (1) — (N) `auditoria`: crônicas das ações sofridas por cada personagem.
 * `fichas` (1) — (1) `github_cache`: relacionamento indireto por chave natural (`usuario_github`).
 * `modulos` (1) — (N) `missoes`: cada módulo encadeia seus desafios oficiais.
+* `modulos` (1) — (N) `aulas`: aulas técnicas estruturadas por módulo da trilha.
+* `aulas` (1) — (N) `atividades`: sequência de atividades práticas passo a passo vinculadas a cada aula.
+* `usuarios` (1) — (N) `progresso_aulas`: rastreamento individual de aulas concluídas com chave única \`UNIQUE(usuario_id, modulo_id, aula_id)\`.
+* `usuarios` (1) — (N) `progresso_atividades`: rastreamento individual de atividades superadas com chave única \`UNIQUE(usuario_id, atividade_id)\`.
 * `fichas` (N) — (N) `missoes`, via `missoes_concluidas`: registro imutável com chave única `UNIQUE(ficha_id, missao_id)`.
 * `fichas` (1) — (N) `denuncias`: denúncias submetidas por estudantes e julgadas por moderadores.
 * `usuarios` (1) — (N) `salas` (professor) e `usuarios` (N) — (N) `salas` via `sala_alunos` (estudantes matriculados).
@@ -966,6 +973,11 @@ erDiagram
     FICHAS ||--o{ MISSOES_CONCLUIDAS : "completa"
     MISSOES ||--o{ MISSOES_CONCLUIDAS : "concluida por"
     MODULOS ||--o{ MISSOES : "contem"
+    MODULOS ||--o{ AULAS : "estrutura"
+    AULAS ||--o{ ATIVIDADES : "contem"
+    MISSOES ||--o{ ATIVIDADES : "praticada em"
+    USUARIOS ||--o{ PROGRESSO_AULAS : "completa"
+    USUARIOS ||--o{ PROGRESSO_ATIVIDADES : "supera"
     USUARIOS ||--o{ SESSOES : "autentica"
     FICHAS ||--o{ DENUNCIAS : "recebe"
     USUARIOS ||--o{ DENUNCIAS : "denuncia / modera"
@@ -1180,6 +1192,71 @@ CREATE TABLE IF NOT EXISTS missoes (
     dificuldade VARCHAR(10) DEFAULT 'facil' CHECK (dificuldade IN ('facil', 'medio', 'dificil')),
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Tabela de Aulas Técnicas da Trilha (RF13, RF13a, RF13b)
+CREATE TABLE IF NOT EXISTS aulas (
+    id VARCHAR(100) PRIMARY KEY,
+    modulo_id INT REFERENCES modulos(id) ON DELETE CASCADE,
+    numero INT NOT NULL,
+    titulo VARCHAR(150) NOT NULL,
+    subtitulo VARCHAR(255) NOT NULL,
+    tempo_estimado VARCHAR(50) NOT NULL,
+    xp_recompensa INT DEFAULT 40,
+    resumo TEXT NOT NULL,
+    objetivos JSONB,
+    secoes JSONB NOT NULL,
+    conceitos_chave JSONB,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(modulo_id, numero)
+);
+
+-- Tabela de Sequência de Atividades Práticas Passo a Passo (RF13c, RF14, RF15)
+CREATE TABLE IF NOT EXISTS atividades (
+    id VARCHAR(100) PRIMARY KEY,
+    aula_id VARCHAR(100) REFERENCES aulas(id) ON DELETE CASCADE,
+    modulo_id INT REFERENCES modulos(id) ON DELETE CASCADE,
+    ordem INT NOT NULL,
+    titulo VARCHAR(150) NOT NULL,
+    descricao_passo TEXT NOT NULL,
+    tipo VARCHAR(30) DEFAULT 'conceitual',
+    missao_id INT REFERENCES missoes(id) ON DELETE SET NULL,
+    dificuldade VARCHAR(10) DEFAULT 'facil',
+    xp INT DEFAULT 15,
+    dica TEXT,
+    template_codigo TEXT,
+    criterio_aceite TEXT NOT NULL,
+    instrucoes_passo_a_passo JSONB,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(aula_id, ordem)
+);
+
+-- Tabela de Progresso em Aulas Técnicas da Trilha (RF13d)
+CREATE TABLE IF NOT EXISTS progresso_aulas (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+    modulo_id INT NOT NULL,
+    aula_id VARCHAR(100) NOT NULL,
+    concluida BOOLEAN DEFAULT TRUE,
+    data_conclusao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(usuario_id, modulo_id, aula_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_progresso_aulas_usuario_modulo ON progresso_aulas (usuario_id, modulo_id);
+
+-- Tabela de Progresso em Sequência de Atividades Práticas (RF13d, RF14)
+CREATE TABLE IF NOT EXISTS progresso_atividades (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+    modulo_id INT NOT NULL,
+    aula_id VARCHAR(100) NOT NULL,
+    atividade_id VARCHAR(100) NOT NULL,
+    concluida BOOLEAN DEFAULT TRUE,
+    codigo_submetido TEXT,
+    data_conclusao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(usuario_id, atividade_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_progresso_atividades_busca ON progresso_atividades (usuario_id, modulo_id, aula_id);
 
 -- 8. Registro de Missões Concluídas
 CREATE TABLE IF NOT EXISTS missoes_concluidas (

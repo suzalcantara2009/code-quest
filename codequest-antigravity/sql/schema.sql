@@ -152,3 +152,31 @@ CREATE TABLE IF NOT EXISTS auditoria (
     detalhes TEXT,
     data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Tabela de Progresso em Aulas Técnicas da Trilha (RF13, RF13a)
+CREATE TABLE IF NOT EXISTS progresso_aulas (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+    modulo_id INT NOT NULL,
+    aula_id VARCHAR(100) NOT NULL,
+    concluida BOOLEAN DEFAULT TRUE,
+    data_conclusao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(usuario_id, modulo_id, aula_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_progresso_aulas_usuario_modulo ON progresso_aulas (usuario_id, modulo_id);
+
+-- Tabela de Progresso em Sequência de Atividades Práticas (RF14, RF15)
+CREATE TABLE IF NOT EXISTS progresso_atividades (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+    modulo_id INT NOT NULL,
+    aula_id VARCHAR(100) NOT NULL,
+    atividade_id VARCHAR(100) NOT NULL,
+    concluida BOOLEAN DEFAULT TRUE,
+    codigo_submetido TEXT,
+    data_conclusao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(usuario_id, atividade_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_progresso_atividades_busca ON progresso_atividades (usuario_id, modulo_id, aula_id);

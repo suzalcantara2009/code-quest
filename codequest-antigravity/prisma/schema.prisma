@@ -33,6 +33,8 @@ model Usuario {
   denuncias_moderadas Denuncia[]        @relation("ModeradorRel")
   salas_lecionadas   Sala[]             @relation("ProfessorSalas")
   salas_matriculadas SalaAluno[]
+  progresso_aulas    ProgressoAula[]
+  progresso_atividades ProgressoAtividade[]
 
   @@map("usuarios")
 }
@@ -195,4 +197,36 @@ model Auditoria {
   autor      Usuario? @relation(fields: [autor_id], references: [id], onDelete: SetNull)
 
   @@map("auditoria")
+}
+
+model ProgressoAula {
+  id             Int       @id @default(autoincrement())
+  usuario_id     Int
+  modulo_id      Int
+  aula_id        String    @db.VarChar(100)
+  concluida      Boolean   @default(true)
+  data_conclusao DateTime  @default(now()) @db.Timestamp(6)
+
+  usuario        Usuario   @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+
+  @@unique([usuario_id, modulo_id, aula_id])
+  @@index([usuario_id, modulo_id], map: "idx_progresso_aulas_usuario_modulo")
+  @@map("progresso_aulas")
+}
+
+model ProgressoAtividade {
+  id               Int       @id @default(autoincrement())
+  usuario_id       Int
+  modulo_id        Int
+  aula_id          String    @db.VarChar(100)
+  atividade_id     String    @db.VarChar(100)
+  concluida        Boolean   @default(true)
+  codigo_submetido String?   @db.Text
+  data_conclusao   DateTime  @default(now()) @db.Timestamp(6)
+
+  usuario          Usuario   @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+
+  @@unique([usuario_id, atividade_id])
+  @@index([usuario_id, modulo_id, aula_id], map: "idx_progresso_atividades_busca")
+  @@map("progresso_atividades")
 }

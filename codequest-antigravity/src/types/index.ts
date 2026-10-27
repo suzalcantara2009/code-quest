@@ -96,6 +96,70 @@ export interface MissaoConcluida {
   data_conclusao: Date;
 }
 
+export interface ProgressoAula {
+  id: number;
+  usuario_id: number;
+  modulo_id: number;
+  aula_id: string;
+  concluida: boolean;
+  data_conclusao: Date | string;
+}
+
+export interface ProgressoAtividade {
+  id: number;
+  usuario_id: number;
+  modulo_id: number;
+  aula_id: string;
+  atividade_id: string;
+  concluida: boolean;
+  codigo_submetido?: string | null;
+  data_conclusao: Date | string;
+}
+
+export interface SecaoConteudoAula {
+  titulo: string;
+  explicacao: string;
+  analogiaRPG?: string;
+  codigoExemplo?: {
+    linguagem: string;
+    tituloSnippet?: string;
+    codigo: string;
+    explicacaoLinhaALinha?: string;
+  };
+  dicaPro?: string;
+  atencaoArmadilha?: string;
+}
+
+export interface AtividadeSequencia {
+  id: string;
+  ordem: number;
+  titulo: string;
+  descricaoPasso: string;
+  tipo: 'conceitual' | 'codigo' | 'missao_oficial';
+  missaoId?: number; // Vínculo com a missão oficial correspondente
+  dificuldade: DificuldadeMissao;
+  xp: number;
+  dica: string;
+  templateCodigo?: string;
+  criterioAceite: string;
+  instrucoesPassoAPasso: string[];
+}
+
+export interface AulaTecnica {
+  id: string;
+  modulo_id: number;
+  numero: number;
+  titulo: string;
+  subtitulo: string;
+  tempoEstimado: string;
+  xpRecompensa: number;
+  resumo: string;
+  objetivos: string[];
+  secoes: SecaoConteudoAula[];
+  conceitosChave: Array<{ termo: string; definicao: string }>;
+  sequenciaAtividades: AtividadeSequencia[];
+}
+
 export interface Denuncia {
   id: number;
   ficha_id: number;

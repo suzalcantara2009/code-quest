@@ -104,6 +104,43 @@ CREATE TABLE IF NOT EXISTS missoes (
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Tabela de Aulas Técnicas da Trilha (RF13, RF13a)
+CREATE TABLE IF NOT EXISTS aulas (
+    id VARCHAR(100) PRIMARY KEY,
+    modulo_id INT REFERENCES modulos(id) ON DELETE CASCADE,
+    numero INT NOT NULL,
+    titulo VARCHAR(150) NOT NULL,
+    subtitulo VARCHAR(255) NOT NULL,
+    tempo_estimado VARCHAR(50) NOT NULL,
+    xp_recompensa INT DEFAULT 40,
+    resumo TEXT NOT NULL,
+    objetivos JSONB,
+    secoes JSONB NOT NULL,
+    conceitos_chave JSONB,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(modulo_id, numero)
+);
+
+-- Tabela de Sequência de Atividades Práticas Passo a Passo (RF14, RF15)
+CREATE TABLE IF NOT EXISTS atividades (
+    id VARCHAR(100) PRIMARY KEY,
+    aula_id VARCHAR(100) REFERENCES aulas(id) ON DELETE CASCADE,
+    modulo_id INT REFERENCES modulos(id) ON DELETE CASCADE,
+    ordem INT NOT NULL,
+    titulo VARCHAR(150) NOT NULL,
+    descricao_passo TEXT NOT NULL,
+    tipo VARCHAR(30) DEFAULT 'conceitual',
+    missao_id INT REFERENCES missoes(id) ON DELETE SET NULL,
+    dificuldade VARCHAR(10) DEFAULT 'facil',
+    xp INT DEFAULT 15,
+    dica TEXT,
+    template_codigo TEXT,
+    criterio_aceite TEXT NOT NULL,
+    instrucoes_passo_a_passo JSONB,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(aula_id, ordem)
+);
+
 -- Tabela de Missões Concluídas (RF15, RF15b)
 CREATE TABLE IF NOT EXISTS missoes_concluidas (
     id SERIAL PRIMARY KEY,

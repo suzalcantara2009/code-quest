@@ -313,6 +313,48 @@ async function main() {
     const { PrismaClient } = require('@prisma/client');
     prisma = new PrismaClient();
 
+    // 1. Usuário padrão para sessões de desenvolvimento e testes (ID: 1)
+    await prisma.usuario.upsert({
+      where: { id: 1 },
+      update: {
+        nome: 'Aprendiz de Código',
+        email: 'estudante@codequest.dev',
+        tipo: 'estudante',
+        email_verificado: true,
+      },
+      create: {
+        id: 1,
+        nome: 'Aprendiz de Código',
+        email: 'estudante@codequest.dev',
+        senha_hash: '$2a$10$eO1d4lW4F22y9h6r7fPz8eXQ4oK3eI1cM9kG7oP3rQ8aZ7vY2lK6m',
+        tipo: 'estudante',
+        email_verificado: true,
+      },
+    });
+
+    // 2. Ficha ativa padrão para o usuário 1
+    await prisma.ficha.upsert({
+      where: { id: 1 },
+      update: {
+        usuario_id: 1,
+        nome: 'Aventureiro Dev',
+        universo: 'Games',
+        classe: 'Guerreiro',
+        poder: 20,
+        ativo: true,
+      },
+      create: {
+        id: 1,
+        usuario_id: 1,
+        nome: 'Aventureiro Dev',
+        universo: 'Games',
+        classe: 'Guerreiro',
+        poder: 20,
+        ativo: true,
+      },
+    });
+
+    // 3. Módulos da Trilha
     for (const m of modulos) {
       await prisma.modulo.upsert({
         where: { ordem: m.ordem },
@@ -331,6 +373,7 @@ async function main() {
       });
     }
 
+    // 4. Missões Oficiais
     for (const missao of missoes) {
       await prisma.missao.upsert({
         where: { id: missao.id },
@@ -356,7 +399,90 @@ async function main() {
       });
     }
 
-    console.log('✅ Seed finalizado com sucesso no banco PostgreSQL (24 missões cadastradas)!');
+    // 5. Aulas Técnicas e Sequência de Atividades Passo a Passo
+    const courseLessonsPath = path.resolve(__dirname, '../src/lib/course-lessons.json');
+    if (fs.existsSync(courseLessonsPath)) {
+      const courseLessonsData = JSON.parse(fs.readFileSync(courseLessonsPath, 'utf8'));
+      let totalAulasCadastradas = 0;
+      let totalAtividadesCadastradas = 0;
+
+      for (const [modIdStr, aulas] of Object.entries(courseLessonsData)) {
+        const modId = Number(modIdStr);
+        for (const aula of aulas) {
+          await prisma.aula.upsert({
+            where: { id: aula.id },
+            update: {
+              modulo_id: modId,
+              numero: aula.numero,
+              titulo: aula.titulo,
+              subtitulo: aula.subtitulo,
+              tempo_estimado: aula.tempoEstimado,
+              xp_recompensa: aula.xpRecompensa || 40,
+              resumo: aula.resumo,
+              objetivos: aula.objetivos,
+              secoes: aula.secoes,
+              conceitos_chave: aula.conceitosChave,
+            },
+            create: {
+              id: aula.id,
+              modulo_id: modId,
+              numero: aula.numero,
+              titulo: aula.titulo,
+              subtitulo: aula.subtitulo,
+              tempo_estimado: aula.tempoEstimado,
+              xp_recompensa: aula.xpRecompensa || 40,
+              resumo: aula.resumo,
+              objetivos: aula.objetivos,
+              secoes: aula.secoes,
+              conceitos_chave: aula.conceitosChave,
+            },
+          });
+          totalAulasCadastradas++;
+
+          for (const atv of aula.sequenciaAtividades || []) {
+            await prisma.atividade.upsert({
+              where: { id: atv.id },
+              update: {
+                aula_id: aula.id,
+                modulo_id: modId,
+                ordem: atv.ordem,
+                titulo: atv.titulo,
+                descricao_passo: atv.descricaoPasso,
+                tipo: atv.tipo || 'conceitual',
+                missao_id: atv.missaoId || null,
+                dificuldade: atv.dificuldade || 'facil',
+                xp: atv.xp || 15,
+                dica: atv.dica || null,
+                template_codigo: atv.templateCodigo || null,
+                criterio_aceite: atv.criterioAceite,
+                instrucoes_passo_a_passo: atv.instrucoesPassoAPasso || [],
+              },
+              create: {
+                id: atv.id,
+                aula_id: aula.id,
+                modulo_id: modId,
+                ordem: atv.ordem,
+                titulo: atv.titulo,
+                descricao_passo: atv.descricaoPasso,
+                tipo: atv.tipo || 'conceitual',
+                missao_id: atv.missaoId || null,
+                dificuldade: atv.dificuldade || 'facil',
+                xp: atv.xp || 15,
+                dica: atv.dica || null,
+                template_codigo: atv.templateCodigo || null,
+                criterio_aceite: atv.criterioAceite,
+                instrucoes_passo_a_passo: atv.instrucoesPassoAPasso || [],
+              },
+            });
+            totalAtividadesCadastradas++;
+          }
+        }
+      }
+      console.log(`✅ Aulas técnicas cadastradas no Neon: ${totalAulasCadastradas}`);
+      console.log(`✅ Atividades práticas cadastradas no Neon: ${totalAtividadesCadastradas}`);
+    }
+
+    console.log('✅ Seed finalizado com sucesso no banco PostgreSQL Neon!');
   } catch (err) {
     console.log(`⚠️ Aviso na conexão com o banco de dados: ${err.message}`);
     console.log('✅ Dados das 24 missões da trilha carregados com sucesso no catálogo em memória e em sql/seed.sql.');

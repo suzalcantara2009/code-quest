@@ -101,32 +101,81 @@ model Ficha {
 }
 
 model Modulo {
-  id         Int      @id @default(autoincrement())
-  ordem      Int      @unique
-  titulo     String   @db.VarChar(100)
-  tecnologia String   @db.VarChar(50)
-  descricao  String   @db.Text
+  id         Int         @id @default(autoincrement())
+  ordem      Int         @unique
+  titulo     String      @db.VarChar(100)
+  tecnologia String      @db.VarChar(50)
+  descricao  String      @db.Text
 
   missoes    Missao[]
+  aulas      Aula[]
+  atividades Atividade[]
 
   @@map("modulos")
 }
 
 model Missao {
-  id              Int       @id @default(autoincrement())
+  id              Int               @id @default(autoincrement())
   modulo_id       Int
-  titulo          String    @db.VarChar(150)
-  explicacao      String?   @db.Text
-  enunciado       String    @db.Text
-  codigo_inicial  String?   @db.Text
-  criterio_aceite String    @db.Text
-  dificuldade     String    @default("facil") @db.VarChar(10) // 'facil', 'medio', 'dificil'
-  criado_em       DateTime  @default(now()) @db.Timestamp(6)
+  titulo          String            @db.VarChar(150)
+  explicacao      String?           @db.Text
+  enunciado       String            @db.Text
+  codigo_inicial  String?           @db.Text
+  criterio_aceite String            @db.Text
+  dificuldade     String            @default("facil") @db.VarChar(10) // 'facil', 'medio', 'dificil'
+  criado_em       DateTime          @default(now()) @db.Timestamp(6)
 
-  modulo          Modulo    @relation(fields: [modulo_id], references: [id], onDelete: Cascade)
+  modulo          Modulo            @relation(fields: [modulo_id], references: [id], onDelete: Cascade)
   conclusoes      MissaoConcluida[]
+  atividades      Atividade[]
 
   @@map("missoes")
+}
+
+model Aula {
+  id              String      @id @db.VarChar(100)
+  modulo_id       Int
+  numero          Int
+  titulo          String      @db.VarChar(150)
+  subtitulo       String      @db.VarChar(255)
+  tempo_estimado  String      @db.VarChar(50)
+  xp_recompensa   Int         @default(40)
+  resumo          String      @db.Text
+  objetivos       Json?
+  secoes          Json
+  conceitos_chave Json?
+  criado_em       DateTime    @default(now()) @db.Timestamp(6)
+
+  modulo          Modulo      @relation(fields: [modulo_id], references: [id], onDelete: Cascade)
+  atividades      Atividade[]
+
+  @@unique([modulo_id, numero])
+  @@map("aulas")
+}
+
+model Atividade {
+  id                       String      @id @db.VarChar(100)
+  aula_id                  String      @db.VarChar(100)
+  modulo_id                Int
+  ordem                    Int
+  titulo                   String      @db.VarChar(150)
+  descricao_passo          String      @db.Text
+  tipo                     String      @db.VarChar(30) // 'conceitual', 'codigo', 'missao_oficial'
+  missao_id                Int?
+  dificuldade              String      @default("facil") @db.VarChar(10)
+  xp                       Int         @default(15)
+  dica                     String?     @db.Text
+  template_codigo          String?     @db.Text
+  criterio_aceite          String      @db.Text
+  instrucoes_passo_a_passo Json?
+  criado_em                DateTime    @default(now()) @db.Timestamp(6)
+
+  aula                     Aula        @relation(fields: [aula_id], references: [id], onDelete: Cascade)
+  modulo                   Modulo      @relation(fields: [modulo_id], references: [id], onDelete: Cascade)
+  missao                   Missao?     @relation(fields: [missao_id], references: [id], onDelete: SetNull)
+
+  @@unique([aula_id, ordem])
+  @@map("atividades")
 }
 
 model MissaoConcluida {

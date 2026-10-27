@@ -122,7 +122,7 @@ export default function ModuloDetalhesPage({ params }: { params: { moduloId: str
     icone: BookOpen,
   };
 
-  const aulasModulo: AulaTecnica[] = obterAulasDoModulo(moduloId);
+  const [aulasModulo, setAulasModulo] = useState<AulaTecnica[]>(obterAulasDoModulo(moduloId));
   const guiaSintaxe = GUIAS_SINTAXE[moduloId];
 
   // Estados de navegação e abas
@@ -130,6 +130,26 @@ export default function ModuloDetalhesPage({ params }: { params: { moduloId: str
   const [aulaSelecionadaId, setAulaSelecionadaId] = useState<string>(
     aulasModulo[0]?.id || ''
   );
+
+  // Carrega aulas técnicas diretamente do banco Neon Postgres
+  useEffect(() => {
+    const carregarAulasDoBanco = async () => {
+      try {
+        const res = await fetch(`/api/trilha/aulas?modulo_id=${moduloId}`);
+        const data = await res.json();
+        if (data.sucesso && Array.isArray(data.dados) && data.dados.length > 0) {
+          setAulasModulo(data.dados);
+          if (!aulaSelecionadaId || !data.dados.some((a) => a.id === aulaSelecionadaId)) {
+            setAulaSelecionadaId(data.dados[0]?.id || '');
+          }
+        }
+      } catch (err) {
+        console.error('Erro ao buscar aulas do banco:', err);
+      }
+    };
+
+    carregarAulasDoBanco();
+  }, [moduloId]);
 
   // Estados de dados e persistência
   const [missoes, setMissoes] = useState<MissaoAdmin[]>([]);

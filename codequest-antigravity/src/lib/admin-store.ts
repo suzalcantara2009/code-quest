@@ -1149,6 +1149,29 @@ export async function listarMissoesPublicas(filtros?: {
   dificuldade?: string;
   modulo_id?: number;
 }): Promise<MissaoAdmin[]> {
+  try {
+    const { prisma } = await import('./db');
+    const where: any = {};
+    if (filtros?.dificuldade && filtros.dificuldade !== '') {
+      where.dificuldade = filtros.dificuldade;
+    }
+    if (filtros?.modulo_id && Number(filtros.modulo_id) > 0) {
+      where.modulo_id = Number(filtros.modulo_id);
+    }
+    const missoesDb = await prisma.missao.findMany({
+      where,
+      orderBy: { id: 'asc' },
+    });
+    if (missoesDb && missoesDb.length > 0) {
+      return missoesDb.map((m) => ({
+        ...m,
+        criado_em: m.criado_em.toISOString(),
+      })) as unknown as MissaoAdmin[];
+    }
+  } catch (err) {
+    // Fallback silencioso para memória
+  }
+
   let resultado = [...store.missoes];
 
   if (filtros?.dificuldade && filtros.dificuldade !== '') {
@@ -1163,6 +1186,21 @@ export async function listarMissoesPublicas(filtros?: {
 }
 
 export async function obterMissaoPorId(id: number): Promise<MissaoAdmin | null> {
+  try {
+    const { prisma } = await import('./db');
+    const missaoDb = await prisma.missao.findUnique({
+      where: { id },
+    });
+    if (missaoDb) {
+      return {
+        ...missaoDb,
+        criado_em: missaoDb.criado_em.toISOString(),
+      } as unknown as MissaoAdmin;
+    }
+  } catch (err) {
+    // Fallback
+  }
+
   const missao = store.missoes.find((m) => m.id === id);
   return missao ? { ...missao } : null;
 }

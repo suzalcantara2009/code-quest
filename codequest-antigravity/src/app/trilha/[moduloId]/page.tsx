@@ -139,9 +139,7 @@ export default function ModuloDetalhesPage({ params }: { params: { moduloId: str
         const data = await res.json();
         if (data.sucesso && Array.isArray(data.dados) && data.dados.length > 0) {
           setAulasModulo(data.dados);
-          if (!aulaSelecionadaId || !data.dados.some((a: AulaTecnica) => a.id === aulaSelecionadaId)) {
-            setAulaSelecionadaId(data.dados[0]?.id || '');
-          }
+          setAulaSelecionadaId((prev) => (!prev || !data.dados.some((a: AulaTecnica) => a.id === prev) ? (data.dados[0]?.id || '') : prev));
         }
       } catch (err) {
         console.error('Erro ao buscar aulas do banco:', err);

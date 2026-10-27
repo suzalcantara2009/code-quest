@@ -1420,3 +1420,198 @@ ON CONFLICT (id) DO UPDATE SET
 * **Destino e Estratégia de Deploy**: **Vercel** com integração e entrega contínua (CI/CD) disparada automaticamente a cada push na branch `main` do GitHub.
   - A stack foi definida previamente considerando as restrições da Vercel (arquitetura Serverless efêmera), o que motivou a decisão arquitetural de persistir o cache do GitHub (`github_cache`) e as sessões em tabelas relacionais do banco, e não na memória volátil do processo Node.js.
   - O banco de dados gerenciado em nuvem (Neon) provê conexões seguras com pooling, backups automatizados com retenção mínima de 7 dias (RNF10) e variável `DATABASE_URL` gerenciada via painel seguro da Vercel (RNF05).
+
+---
+
+## 9. Instalação e Execução
+
+Esta seção descreve os requisitos de ambiente, configuração de banco de dados, variáveis de ambiente, instruções passo a passo para execução e roteiro de testes da aplicação **CodeQuest**.
+
+### 9.1 Ambiente de Desenvolvimento e Execução
+
+* **Node.js**: Versão 20.x ou superior (testado e homologado no **Node.js v22.22.0 LTS**).
+* **Gerenciador de Pacotes**: **npm** versão 10.x ou superior.
+* **Sistemas Operacionais Testados**:
+  - **Windows 10 / 11 (x64)** via PowerShell 5.1 e PowerShell 7+.
+  - Compatível com **Linux** (Ubuntu 22.04 LTS / Debian 12) e **macOS** (Sonoma / Sequoia).
+* **Navegadores Suportados**: Google Chrome, Mozilla Firefox, Microsoft Edge e Safari (versões recentes com suporte a ES2022 e CSS Flexbox/Grid).
+
+---
+
+### 9.2 Banco de Dados Relacional
+
+A arquitetura de dados do CodeQuest utiliza **PostgreSQL 15+** com suporte nativo a constraints relacionais avançadas, índices parciais e colunas com tipos estruturados `JSONB`.
+
+* **Provedor Homologado**: **Neon PostgreSQL** (Serverless com pooling de conexões e SSL ativado).
+* **Nome Padrão do Banco de Dados**: `neondb` (nuvem Neon) ou `codequest` (instância local de desenvolvimento).
+* **Scripts SQL Nativos Inclusos no Repositório**:
+  1. **DDL Estrutural**: [`codequest-antigravity/sql/schema.sql`](./codequest-antigravity/sql/schema.sql)
+     - Contém a criação de todas as 15 tabelas relacionais do sistema: `usuarios`, `tokens_reset_senha`, `sessoes`, `github_cache`, `fichas`, `modulos`, `missoes`, `aulas`, `atividades`, `missoes_concluidas`, `denuncias`, `salas`, `sala_alunos`, `auditoria`, `progresso_aulas` e `progresso_atividades`.
+     - Inclui índices de performance e restrições de unicidade estritas (`idx_ficha_ativa_unica_por_usuario` garantindo **RN06** e `idx_github_unico_em_ficha_ativa` garantindo **RN09**).
+  2. **Carga Inicial de Dados (Seed)**: [`codequest-antigravity/sql/seed.sql`](./codequest-antigravity/sql/seed.sql)
+     - Popula os **4 módulos sequenciais** da trilha pedagógica.
+     - Insere as **24 missões oficiais completas** com explicações, enunciados e critérios de aceite.
+     - Insere o usuário de demonstração (`estudante@codequest.dev`) e sua ficha inicial ativa (`Aventureiro Dev`).
+     - Cadastra as **18 aulas técnicas aprofundadas** e as **60 atividades práticas passo a passo**.
+* **ORM e Migrações**: **Prisma ORM** (`prisma/schema.prisma`), totalmente sincronizado com o banco Neon e com o script de carga automatizado [`codequest-antigravity/scripts/seed.js`](./codequest-antigravity/scripts/seed.js).
+
+---
+
+### 9.3 Variáveis de Ambiente
+
+O projeto adota o princípio de segurança **RNF05** (nenhum segredo ou credencial real versionada no repositório). O arquivo [`.env.example`](./.env.example) serve como modelo oficial.
+
+Para configurar o ambiente, copie o modelo para um arquivo `.env` e preencha as variáveis correspondentes:
+
+```bash
+# Copiar o modelo para o arquivo de configuração local
+cp .env.example .env
+```
+
+#### Conteúdo do arquivo `.env.example` (Sanitizado)
+
+```env
+# ========================================================
+# CodeQuest - Variáveis de Ambiente (.env.example)
+# RNF05: Nenhuma credencial no código-fonte
+# ========================================================
+
+# Banco de Dados (PostgreSQL / Neon)
+DATABASE_URL="postgresql://usuario:senha@localhost:5432/codequest?schema=public"
+
+# Autenticação e Segurança (RF01a, RNF01, RNF05)
+SESSION_SECRET="sua-chave-secreta-de-sessao-com-minimo-32-caracteres"
+JWT_SECRET="sua-chave-secreta-jwt-super-segura"
+
+# URL Base da Aplicação
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+
+# Integração GitHub OAuth (RF01b)
+GITHUB_OAUTH_CLIENT_ID="seu_github_oauth_client_id"
+GITHUB_OAUTH_CLIENT_SECRET="seu_github_oauth_client_secret"
+
+# Integração GitHub API (RF12 - Token para limite de 5.000 req/h)
+GITHUB_API_TOKEN="seu_github_personal_access_token"
+
+# GitHub Webhook HMAC Secret (RF15a - Validação de payloads criptografados)
+GITHUB_WEBHOOK_SECRET="seu_segredo_hmac_para_webhooks"
+
+# Envio de E-mails Transacionais (RF01a, RF01c, RF20a - Verificação e Redefinição)
+SMTP_HOST="smtp.example.com"
+SMTP_PORT="587"
+SMTP_USER="usuario@example.com"
+SMTP_PASS="senha-smtp"
+SMTP_FROM="CodeQuest <nao-responda@codequest.dev>"
+
+# Ambiente de Execução
+NODE_ENV="development"
+```
+
+> **Nota sobre o Banco de Dados Neon**: Ao utilizar o Neon Serverless, adicione os parâmetros `?sslmode=require&channel_binding=require` ao final da connection string da `DATABASE_URL`.
+
+---
+
+### 9.4 Passo a Passo Numerado de Instalação e Execução
+
+Siga rigorosamente as etapas numeradas abaixo a partir do seu terminal:
+
+#### 1. Clonar o Repositório Git
+```bash
+git clone https://github.com/suzalcantara2009/codequest-antigravity.git
+cd codequest-antigravity/codequest-antigravity
+```
+*(Caso você já esteja na raiz do repositório clonado, navegue para o diretório do projeto `codequest-antigravity`)*.
+
+#### 2. Instalar as Dependências do Projeto
+```bash
+npm install
+```
+
+#### 3. Configurar as Variáveis de Ambiente
+Crie o arquivo `.env` baseado no `.env.example` e informe a URL de conexão do PostgreSQL / Neon:
+```bash
+# No Windows PowerShell:
+Copy-Item .env.example .env
+
+# No Linux / macOS:
+cp .env.example .env
+```
+Edite o arquivo `.env` gerado inserindo sua `DATABASE_URL` válida.
+
+#### 4. Gerar o Cliente Tipado do Prisma ORM
+Gera os tipos estritos TypeScript correspondentes ao esquema relacional:
+```bash
+npm run db:generate
+```
+
+#### 5. Executar a Carga Inicial do Banco de Dados (Seed)
+Popula os módulos, missões oficiais, aulas técnicas e atividades no PostgreSQL:
+```bash
+npm run db:seed
+```
+*(Alternativamente, você pode executar o script [`sql/schema.sql`](./codequest-antigravity/sql/schema.sql) seguido do [`sql/seed.sql`](./codequest-antigravity/sql/seed.sql) diretamente no console SQL do Neon ou via psql)*.
+
+#### 6. Validar a Compilação de Produção (Build)
+Certifique-se de que o projeto compila sem nenhum erro de tipagem TypeScript ou ESLint:
+```bash
+npm run build
+```
+*Resultado esperado*: Compilação com sucesso (`✓ Compiled successfully`), zero avisos impeditivos e todas as **39 rotas** geradas.
+
+#### 7. Iniciar o Servidor de Desenvolvimento
+Inicie a aplicação localmente:
+```bash
+npm run dev
+```
+
+#### 8. Acessar a Aplicação no Navegador
+Abra o navegador e acesse:
+```text
+http://localhost:3000
+```
+
+---
+
+### 9.5 Como Testar (Usuários de Demonstração e Roteiro de Testes)
+
+#### Usuários Pré-Configurados para Teste
+O banco de dados já inicializa com contas de demonstração para facilitar a avaliação:
+
+| Perfil | E-mail | Senha | Função / Permissão |
+| :--- | :--- | :--- | :--- |
+| **Estudante / Aprendiz** | `estudante@codequest.dev` | `aprendiz123` | Criar fichas, estudar aulas técnicas, cumprir atividades e resolver missões |
+| **Administrador / Curador** | `admin@codequest.dev` | `admin123` | Acessar `/admin`, gerenciar missões, mediar denúncias e consultar auditoria |
+
+#### Roteiro do Fluxo Principal de Testes
+
+1. **Apresentação e Landing Page (`/`)**:
+   - Navegue por `http://localhost:3000/`.
+   - Observe a estética dark RPG, o preview da ficha de herói com poder dinâmico, o carrossel dos **7 universos permitidos** (Marvel, DC, Star Wars, Tolkien, D&D, Anime, Games) e o currículo dos 4 módulos.
+2. **Autenticação (`/login` e `/cadastro`)**:
+   - Clique em **"Entrar"** e realize login com `estudante@codequest.dev` e `aprendiz123`.
+   - Teste também o cadastro de um novo aventureiro em `/cadastro`, observando a validação em tempo real de confirmação de senha e o aceite obrigatório de termos LGPD.
+3. **Mural e Criação de Fichas (`/fichas` e `/fichas/nova`)**:
+   - Acesse `/fichas` e visualize a ficha ativa "Aventureiro Dev".
+   - Clique em **"Criar Nova Ficha"**, escolha um dos 7 universos (ex.: *Tolkien*), informe uma classe, um nível de poder entre 0 e 100 e um username do GitHub.
+   - Observe a **RN06** em ação: a nova ficha torna-se ativa e a anterior é arquivada automaticamente com registro na tabela `auditoria`.
+4. **Trilha Pedagógica Completa (`/trilha`)**:
+   - Clique na aba **"Trilha"** da navegação superior.
+   - Veja o painel de **Progresso Acadêmico do Herói**, com barra de progresso consolidada, contadores de aulas técnicas lidas e XP acumulado.
+   - Observe os cards dos 4 módulos: *Programação em Blocos*, *Python*, *HTML e CSS* e *JavaScript*.
+5. **Aulas Técnicas e Teoria Aprofundada (`/trilha/1` até `/trilha/4`)**:
+   - Clique em qualquer um dos módulos para abrir a tela de detalhes.
+   - Na aba **"Aulas Técnicas & Teoria"**, navegue pelo índice lateral de aulas.
+   - Inspecione a fundamentação teórica formal, a **Analogia Temática de RPG**, as **Dicas Pro do Mestre** e os alertas de armadilhas.
+   - Teste o botão **"Copiar Código"** em qualquer snippet didático e veja o toast de confirmação.
+   - Clique em **"Marcar como Concluída"**: o status da aula é salvo instantaneamente no banco de dados Neon via API (`POST /api/progresso`).
+6. **Sequência Prática de Atividades Passo a Passo**:
+   - Clique na aba **"Sequência de Atividades"** do módulo.
+   - Interaja com os checkboxes dos passos conceituais e desafios de código para marcar tarefas superadas.
+   - Localize um passo de desafio oficial e clique em **"Resolver Missão"**: você será direcionado para o editor da missão correspondente.
+7. **Resolução de Missões no Editor Interativo (`/missoes/[id]`)**:
+   - Acesse uma missão oficial (ex.: `/missoes/1` ou `/missoes/7`).
+   - Consulte o enunciado, critérios de aceite e código inicial.
+   - Execute o código no editor integrado, teste contra as asserções e submeta a solução com ganho de poder de combate.
+8. **Área Administrativa e Auditoria (`/admin`)**:
+   - Acesse `/admin` com a conta de administrador (`admin@codequest.dev`).
+   - Navegue por **Missões** (`/admin/missoes`), **Tribunal de Denúncias** (`/admin/denuncias`) e **Auditoria Inviolável** (`/admin/auditoria`), verificando o rastreamento imutável de todas as mutações realizadas.
